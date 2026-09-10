@@ -141,7 +141,7 @@
     </section>
 
     <!-- 2. USER VIEW -->
-    <section id="user-view" class="hidden p-6 max-w-6xl mx-auto w-full flex-1">
+    <section id="user-view" class="hidden p-6 max-w-7xl mx-auto w-full flex-1">
       <div class="bg-gradient-to-r from-emerald-900 via-emerald-800 to-emerald-700 text-white rounded-3xl p-6 sm:p-8 mb-6 shadow-lg shadow-emerald-950/10 relative overflow-hidden flex flex-col sm:flex-row justify-between sm:items-center gap-5">
         <div class="relative z-10">
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-emerald-200 text-xs font-semibold mb-3">
@@ -149,7 +149,7 @@
             Portal Requester Barang
           </div>
           <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Daftar Pengajuan Saya</h2>
-          <p class="text-emerald-100/80 text-xs sm:text-sm mt-1 max-w-xl">Lacak status PR, perbarui nomor PR, pantau penawaran harga riil, dan berdiskusi langsung dengan tim pengadaan.</p>
+          <p class="text-emerald-100/80 text-xs sm:text-sm mt-1 max-w-xl">Lacak status PR, PIC procurement yang bertugas, perbarui nomor PR, dan berdiskusi langsung.</p>
         </div>
         <button onclick="toggleModal(true)" class="relative z-10 bg-white text-emerald-900 hover:bg-emerald-50 px-5 py-3 rounded-2xl font-bold text-xs sm:text-sm shadow-md transition-all duration-150 flex items-center gap-2 shrink-0 self-start sm:self-auto">
           <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-700"></i>
@@ -161,7 +161,7 @@
       <div class="mb-4 flex items-center gap-3">
         <div class="relative flex-1 max-w-md">
           <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
-          <input type="text" id="user-search-input" oninput="handleUserSearch(event)" placeholder="Cari barang, brand, tiket, atau No PR..." class="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600 shadow-sm" />
+          <input type="text" id="user-search-input" oninput="handleUserSearch(event)" placeholder="Cari barang, brand, tiket, PIC atau No PR..." class="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600 shadow-sm" />
         </div>
         <span id="user-req-count" class="text-xs font-semibold px-3 py-2 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200/60 shadow-sm">0 Permintaan</span>
       </div>
@@ -172,14 +172,15 @@
           <table class="w-full text-left text-sm">
             <thead class="bg-slate-50/70 border-b border-slate-100 text-slate-500 font-semibold text-[11px] uppercase tracking-wider">
               <tr>
-                <th class="px-6 py-3.5">Detail Barang</th>
-                <th class="px-6 py-3.5">Pemohon</th>
-                <th class="px-6 py-3.5">No. PR (User)</th>
-                <th class="px-6 py-3.5">Real Price (Procurement)</th>
-                <th class="px-6 py-3.5">Est. Budget</th>
-                <th class="px-6 py-3.5">Foto</th>
-                <th class="px-6 py-3.5">Status</th>
-                <th class="px-6 py-3.5 text-center">Aksi / Diskusi</th>
+                <th class="px-5 py-3.5">Detail Barang</th>
+                <th class="px-5 py-3.5">Pemohon</th>
+                <th class="px-5 py-3.5">PIC Procurement</th>
+                <th class="px-5 py-3.5">No. PR (User)</th>
+                <th class="px-5 py-3.5">Real Price</th>
+                <th class="px-5 py-3.5">Est. Budget</th>
+                <th class="px-5 py-3.5">Foto</th>
+                <th class="px-5 py-3.5">Status</th>
+                <th class="px-5 py-3.5 text-center">Aksi</th>
               </tr>
             </thead>
             <tbody id="user-requests-table" class="divide-y divide-slate-100"></tbody>
@@ -203,14 +204,14 @@
             <h2 class="text-2xl font-extrabold tracking-tight text-slate-900">Procurement Board</h2>
             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">Live Workspace</span>
           </div>
-          <p class="text-xs text-slate-500 mt-0.5">Pantau nama pemohon & No. PR, tentukan estimasi real price, dan diskusikan progres pengadaan.</p>
+          <p class="text-xs text-slate-500 mt-0.5">Tugaskan PIC procurement, tetapkan harga penawaran riil, dan kelola proses pengadaan.</p>
         </div>
 
         <!-- Search Bar Procurement -->
         <div class="flex items-center gap-3 w-full sm:w-auto">
           <div class="relative flex-1 sm:w-80">
             <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-2.5"></i>
-            <input type="text" id="procure-search-input" oninput="handleProcureSearch(event)" placeholder="Search item, nama pemohon, No PR..." class="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600 shadow-sm" />
+            <input type="text" id="procure-search-input" oninput="handleProcureSearch(event)" placeholder="Search item, requester, PIC, No PR..." class="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600 shadow-sm" />
           </div>
         </div>
       </div>
@@ -300,7 +301,6 @@
       </div>
 
       <form id="request-form" onsubmit="handleCreateRequest(event)" class="p-6 overflow-y-auto space-y-4 text-xs">
-        <!-- FIELD NAMA PEMOHON -->
         <div>
           <label class="block font-bold text-slate-700 mb-1">Nama Pemohon / Requester <span class="text-rose-500">*</span></label>
           <div class="relative">
@@ -361,7 +361,7 @@
   <div id="modal-ticket-detail" class="hidden fixed inset-0 z-50 bg-slate-950/50 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl overflow-hidden border border-slate-200 flex flex-col md:flex-row max-h-[92vh]">
       
-      <!-- KOLOM KIRI: DETAIL BARANG, PR & REAL PRICE -->
+      <!-- KOLOM KIRI: DETAIL BARANG, PIC, PR & REAL PRICE -->
       <div class="w-full md:w-5/12 p-6 bg-slate-50/70 border-b md:border-b-0 md:border-r border-slate-200 overflow-y-auto flex flex-col justify-between">
         <div>
           <div class="flex items-center justify-between mb-3">
@@ -395,13 +395,24 @@
             </div>
           </div>
 
+          <!-- INPUT FORM: HAK AKSES PIC, PR, DAN REAL PRICE -->
           <div class="mt-4 p-3.5 bg-emerald-50/50 border border-emerald-200/70 rounded-2xl">
             <h4 class="text-xs font-bold text-emerald-950 flex items-center gap-1.5 mb-2.5">
               <i data-lucide="file-badge" class="w-4 h-4 text-emerald-700"></i>
-              Dokumen & Penawaran
+              Penugasan & Dokumen
             </h4>
             
             <div class="space-y-3 text-xs">
+              <!-- PIC Procurement -->
+              <div>
+                <div class="flex justify-between items-center mb-1">
+                  <label class="text-[11px] font-bold text-slate-700">PIC Procurement (Yang Mengerjakan)</label>
+                  <span id="pic-auth-hint" class="text-[9px] px-1.5 py-0.5 rounded font-medium"></span>
+                </div>
+                <input type="text" id="modal-input-pic" placeholder="Contoh: Bayu Wicaksono" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-800 focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600 outline-none transition disabled:bg-slate-100 disabled:text-slate-500 disabled:cursor-not-allowed" />
+              </div>
+
+              <!-- Nomor PR (User) -->
               <div>
                 <div class="flex justify-between items-center mb-1">
                   <label class="text-[11px] font-bold text-slate-700">Nomor PR (Purchase Requisition)</label>
@@ -410,6 +421,7 @@
                 <input type="text" id="modal-input-pr" placeholder="Contoh: PR-2026-X891" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-mono font-bold focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600 outline-none transition disabled:bg-slate-100 disabled:text-slate-500 disabled:cursor-not-allowed" />
               </div>
 
+              <!-- Real Price (Procurement) -->
               <div>
                 <div class="flex justify-between items-center mb-1">
                   <label class="text-[11px] font-bold text-slate-700">Real Price / Vendor Quote (IDR)</label>
@@ -511,6 +523,7 @@
             id: 'REQ-101',
             createdBy: 'user1',
             creatorName: 'Alif Pratama (Div. Tech)',
+            assignedTo: 'Bayu Wicaksono',
             item: 'Dell UltraSharp 27" 4K',
             brand: 'Dell',
             type: 'U2723QE',
@@ -530,6 +543,7 @@
             id: 'REQ-102',
             createdBy: 'user1',
             creatorName: 'Alif Pratama (Div. Tech)',
+            assignedTo: 'Bayu Wicaksono',
             item: 'Keychron Q1 Pro',
             brand: 'Keychron',
             type: 'Wireless Custom Mechanical',
@@ -546,6 +560,7 @@
             id: 'REQ-1652',
             createdBy: 'user1',
             creatorName: 'Alif Pratama (Div. Tech)',
+            assignedTo: 'Siti Rahmawati',
             item: 'Handphone',
             brand: 'Iphone 17',
             type: 'Pro Max',
@@ -562,6 +577,7 @@
             id: 'REQ-103',
             createdBy: 'user2',
             creatorName: 'Dina Lestari (Div. Operasional)',
+            assignedTo: '',
             item: 'MacBook Air M2 16GB',
             brand: 'Apple',
             type: 'Midnight 512GB SSD',
@@ -671,7 +687,7 @@
       lucide.createIcons();
     }
 
-    // USER VIEW RENDER
+    // USER VIEW RENDER (DENGAN KOLOM PIC PROCUREMENT)
     function renderUserDashboard() {
       const tableBody = document.getElementById('user-requests-table');
       const emptyState = document.getElementById('user-empty-state');
@@ -686,6 +702,7 @@
           r.brand.toLowerCase().includes(userSearchTerm) ||
           r.id.toLowerCase().includes(userSearchTerm) ||
           (r.creatorName && r.creatorName.toLowerCase().includes(userSearchTerm)) ||
+          (r.assignedTo && r.assignedTo.toLowerCase().includes(userSearchTerm)) ||
           (r.prNumber && r.prNumber.toLowerCase().includes(userSearchTerm))
         );
       }
@@ -710,8 +727,13 @@
         const statConfig = STATUS_MAP[req.status] || STATUS_MAP['submitted'];
         const commentsCount = req.comments ? req.comments.length : 0;
 
+        // PIC Badge untuk User
+        const picBadge = req.assignedTo
+          ? `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200/80"><i data-lucide="user-check" class="w-3 h-3 text-emerald-600"></i> ${req.assignedTo}</span>`
+          : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-medium text-slate-400 italic bg-slate-100 border border-slate-200">Menunggu Penugasan</span>`;
+
         tr.innerHTML = `
-          <td class="px-6 py-4">
+          <td class="px-5 py-4">
             <div class="font-bold text-slate-900 leading-tight">${req.item}</div>
             <div class="text-[11px] text-slate-500 mt-0.5 flex items-center gap-1.5">
               <span class="font-mono text-emerald-800 font-bold">${req.id}</span>
@@ -719,27 +741,30 @@
               <span class="font-semibold text-slate-600">${req.brand} (${req.type})</span>
             </div>
           </td>
-          <td class="px-6 py-4">
+          <td class="px-5 py-4">
             <div class="text-xs font-bold text-slate-800">${req.creatorName}</div>
             <div class="text-[10px] text-slate-400">@${req.createdBy}</div>
           </td>
-          <td class="px-6 py-4">
+          <td class="px-5 py-4">
+            ${picBadge}
+          </td>
+          <td class="px-5 py-4">
             <span class="text-xs font-mono font-bold px-2 py-1 bg-slate-100 rounded text-slate-800">${req.prNumber || '<span class="text-rose-500 font-medium">Belum Diisi</span>'}</span>
           </td>
-          <td class="px-6 py-4">
+          <td class="px-5 py-4">
             <span class="text-xs font-bold text-emerald-800">${formatIDR(req.realPrice)}</span>
           </td>
-          <td class="px-6 py-4 font-medium text-slate-600 text-xs">
+          <td class="px-5 py-4 font-medium text-slate-600 text-xs">
             ${formatIDR(req.budget)}
           </td>
-          <td class="px-6 py-4">${photoHtml}</td>
-          <td class="px-6 py-4">
+          <td class="px-5 py-4">${photoHtml}</td>
+          <td class="px-5 py-4">
             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${statConfig.badge}">
               <span class="w-1.5 h-1.5 rounded-full ${statConfig.dot}"></span>
               ${statConfig.label}
             </span>
           </td>
-          <td class="px-6 py-4 text-center">
+          <td class="px-5 py-4 text-center">
             <button onclick="openTicketDetail('${req.id}')" class="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-xl font-bold text-xs border border-emerald-200 flex items-center gap-1.5 mx-auto transition shadow-sm">
               <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
               <span>Detail & PR (${commentsCount})</span>
@@ -751,7 +776,7 @@
       lucide.createIcons();
     }
 
-    // PROCUREMENT BOARD RENDER
+    // PROCUREMENT BOARD RENDER (DENGAN PIC BADGE PADA CARD)
     function renderProcurementBoard() {
       const columns = ['submitted', 'sourcing', 'review', 'hold', 'po', 'completed'];
       const counts = { submitted: 0, sourcing: 0, review: 0, hold: 0, po: 0, completed: 0 };
@@ -768,6 +793,7 @@
           r.brand.toLowerCase().includes(procureSearchTerm) ||
           r.id.toLowerCase().includes(procureSearchTerm) ||
           (r.creatorName && r.creatorName.toLowerCase().includes(procureSearchTerm)) ||
+          (r.assignedTo && r.assignedTo.toLowerCase().includes(procureSearchTerm)) ||
           r.createdBy.toLowerCase().includes(procureSearchTerm) ||
           (r.prNumber && r.prNumber.toLowerCase().includes(procureSearchTerm))
         );
@@ -806,6 +832,10 @@
           <p class="text-xs text-slate-600 font-semibold mt-1">${req.brand} • <span class="text-slate-500 font-normal">${req.type}</span></p>
 
           <div class="mt-2.5 bg-slate-50 p-2 rounded-xl border border-slate-200/60 text-[11px] space-y-1">
+            <div class="flex justify-between items-center">
+              <span class="text-slate-400 text-[10px] uppercase font-bold">PIC Procurement</span>
+              <span class="font-bold text-indigo-700">${req.assignedTo || '<span class="text-slate-400 font-normal italic">Belum di-assign</span>'}</span>
+            </div>
             <div class="flex justify-between items-center">
               <span class="text-slate-400 text-[10px] uppercase font-bold">No. PR (User)</span>
               <span class="font-mono font-bold text-slate-800">${req.prNumber || '<span class="text-slate-400 font-normal italic">Belum diisi</span>'}</span>
@@ -866,16 +896,26 @@
       statusBadge.className = `px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase border ${statConfig.badge}`;
       statusBadge.textContent = statConfig.label;
 
+      const picInput = document.getElementById('modal-input-pic');
       const prInput = document.getElementById('modal-input-pr');
       const realPriceInput = document.getElementById('modal-input-realprice');
+      const picHint = document.getElementById('pic-auth-hint');
       const prHint = document.getElementById('pr-auth-hint');
       const priceHint = document.getElementById('price-auth-hint');
       const btnSaveLabel = document.getElementById('btn-save-ticket-label');
 
+      picInput.value = req.assignedTo || '';
       prInput.value = req.prNumber || '';
       realPriceInput.value = req.realPrice || '';
 
+      // HAK AKSES EDIT:
+      // USER: Hanya bisa edit No. PR
+      // PROCUREMENT: Bisa edit PIC yang bertugas & Real Price
       if (currentUser.role === 'user') {
+        picInput.setAttribute('disabled', 'true');
+        picHint.className = 'text-[9px] px-1.5 py-0.5 rounded font-medium bg-slate-200 text-slate-600';
+        picHint.textContent = 'Ditugaskan Procurement';
+
         prInput.removeAttribute('disabled');
         prHint.className = 'text-[9px] px-1.5 py-0.5 rounded font-bold bg-emerald-100 text-emerald-800';
         prHint.textContent = 'Dapat Diedit User';
@@ -886,6 +926,10 @@
 
         btnSaveLabel.textContent = 'Simpan Nomor PR';
       } else {
+        picInput.removeAttribute('disabled');
+        picHint.className = 'text-[9px] px-1.5 py-0.5 rounded font-bold bg-indigo-100 text-indigo-800';
+        picHint.textContent = 'Dikelola Procurement';
+
         prInput.setAttribute('disabled', 'true');
         prHint.className = 'text-[9px] px-1.5 py-0.5 rounded font-medium bg-slate-200 text-slate-600';
         prHint.textContent = 'Diisi oleh User';
@@ -894,7 +938,7 @@
         priceHint.className = 'text-[9px] px-1.5 py-0.5 rounded font-bold bg-emerald-100 text-emerald-800';
         priceHint.textContent = 'Dapat Diedit Procurement';
 
-        btnSaveLabel.textContent = 'Simpan Real Price';
+        btnSaveLabel.textContent = 'Simpan PIC & Real Price';
       }
 
       renderTicketComments(req);
@@ -924,16 +968,19 @@
         saveData();
         alert('Nomor PR berhasil diperbarui oleh User!');
       } else {
+        const picVal = document.getElementById('modal-input-pic').value.trim();
         const realPriceVal = document.getElementById('modal-input-realprice').value;
+        req.assignedTo = picVal;
         req.realPrice = realPriceVal ? Number(realPriceVal) : null;
         saveData();
-        alert('Estimasi Real Price berhasil disimpan oleh Procurement!');
+        alert('PIC & Estimasi Real Price berhasil disimpan oleh Procurement!');
       }
 
       renderProcurementBoard();
       renderUserDashboard();
     }
 
+    // CHAT SYSTEM
     function renderTicketComments(req) {
       const chatBox = document.getElementById('chat-messages-box');
       chatBox.innerHTML = '';
@@ -1038,7 +1085,6 @@
       const modal = document.getElementById('modal-request');
       if (show) {
         modal.classList.remove('hidden');
-        // Isi default nama pemohon sesuai user aktif
         if (currentUser) {
           document.getElementById('req-creator-name').value = currentUser.name;
         }
@@ -1068,6 +1114,7 @@
           id: newId,
           createdBy: currentUser.username,
           creatorName: creatorName || currentUser.name,
+          assignedTo: '', // Kosong saat awal diajukan, menunggu di-assign oleh procurement
           item,
           brand,
           type,
