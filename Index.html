@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ProcureFlow - Sistem Pengadaan Barang</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .kanban-col { min-height: 480px; }
+    .drag-over { background-color: #f1f5f9; border-style: dashed; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+
+  <!-- NAVBAR -->
+  <header id="navbar" class="hidden bg-white border-b border-slate-200 sticky top-0 z-30 px-6 py-3.5 flex justify-between items-center shadow-sm">
+    <div class="flex items-center space-x-3">
+      <div class="bg-indigo-600 text-white p-2 rounded-lg font-bold flex items-center gap-2">
+        <i data-lucide="boxes" class="w-5 h-5"></i>
+        <span>ProcureFlow</span>
+      </div>
+      <span id="role-badge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider"></span>
+    </div>
+
+    <div class="flex items-center space-x-4">
+      <div class="text-right">
+        <p id="nav-user-name" class="text-sm font-semibold leading-tight capitalize"></p>
+        <p id="nav-user-role" class="text-xs text-slate-500 capitalize"></p>
+      </div>
+      <button onclick="handleLogout()" class="text-slate-600 hover:text-rose-600 hover:bg-rose-50 px-3 py-1.5 rounded-md text-sm font-medium transition flex items-center gap-1.5 border border-slate-200">
+        <i data-lucide="log-out" class="w-4 h-4"></i> Logout
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-1 flex flex-col">
+
+    <!-- 1. LOGIN SECTION -->
+    <section id="login-view" class="flex-1 flex items-center justify-center p-4">
+      <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-slate-100">
+        <div class="text-center mb-6">
+          <div class="inline-flex bg-indigo-50 p-3 rounded-full text-indigo-600 mb-3">
+            <i data-lucide="shopping-bag" class="w-8 h-8"></i>
+          </div>
+          <h1 class="text-2xl font-bold text-slate-900">ProcureFlow Login</h1>
+          <p class="text-sm text-slate-500 mt-1">Masuk untuk mengelola & memantau pengadaan barang</p>
+        </div>
+
+        <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Username</label>
+            <input type="text" id="login-username" required class="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="user1 / procure" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Password</label>
+            <input type="password" id="login-password" required class="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="user123 / admin123" />
+          </div>
+          <div id="login-error" class="hidden text-rose-600 text-xs font-medium"></div>
+
+          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg transition shadow">Masuk ke Sistem</button>
+        </form>
+
+        <div class="mt-6 p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-600 leading-relaxed">
+          <span class="font-semibold text-slate-800">Kredensial Demo:</span><br>
+          • User: <code>user1</code> / <code>user123</code> (atau <code>user2</code>)<br>
+          • Procurement: <code>procure</code> / <code>admin123</code>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. USER DASHBOARD -->
+    <section id="user-view" class="hidden p-6 max-w-6xl mx-auto w-full flex-1">
+      <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6">
+        <div>
+          <h2 class="text-2xl font-bold text-slate-900">Permintaan Saya</h2>
+          <p class="text-sm text-slate-500">Pantau progres dan status pengadaan barang yang Anda ajukan.</p>
+        </div>
+        <button onclick="toggleModal(true)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium shadow transition flex items-center gap-2 self-start">
+          <i data-lucide="plus" class="w-4 h-4"></i> Ajukan Permintaan
+        </button>
+      </div>
+
+      <!-- Tabel Request User -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 uppercase text-xs">
+              <tr>
+                <th class="px-5 py-3">Item / Brand</th>
+                <th class="px-5 py-3">Type & Spek</th>
+                <th class="px-5 py-3">Budget (IDR)</th>
+                <th class="px-5 py-3">Foto</th>
+                <th class="px-5 py-3">Tanggal</th>
+                <th class="px-5 py-3">Status</th>
+              </tr>
+            </thead>
+            <tbody id="user-requests-table" class="divide-y divide-slate-100">
+              <!-- Item di-generate via JS -->
+            </tbody>
+          </table>
+        </div>
+        <div id="user-empty-state" class="hidden p-8 text-center text-slate-400">
+          <i data-lucide="clipboard-list" class="w-12 h-12 mx-auto mb-2 opacity-60"></i>
+          <p class="font-medium">Belum ada permintaan barang yang diajukan.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. PROCUREMENT DASHBOARD (JIRA / NOTION KANBAN BOARD) -->
+    <section id="procurement-view" class="hidden p-6 w-full flex-1 flex flex-col">
+      <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-6">
+        <div>
+          <h2 class="text-2xl font-bold text-slate-900">Procurement Board (Kanban)</h2>
+          <p class="text-sm text-slate-500">Geser (Drag & Drop) kartu permintaan barang untuk memperbarui progres status pekerjaan.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg font-medium">Auto-saved to Browser</span>
+        </div>
+      </div>
+
+      <!-- KANBAN BOARD -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 flex-1">
+        <!-- 1. Requested -->
+        <div class="bg-slate-100/70 p-4 rounded-xl border border-slate-200 flex flex-col">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-slate-400"></span>
+              <h3 class="font-semibold text-slate-800 text-sm uppercase tracking-wide">Pengajuan Masuk</h3>
+            </div>
+            <span id="badge-requested" class="text-xs font-bold bg-white text-slate-600 px-2 py-0.5 rounded-full shadow-sm">0</span>
+          </div>
+          <div id="col-requested" data-status="requested" class="kanban-col space-y-3 flex-1 overflow-y-auto" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)"></div>
+        </div>
+
+        <!-- 2. In Review / Sourcing -->
+        <div class="bg-slate-100/70 p-4 rounded-xl border border-slate-200 flex flex-col">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+              <h3 class="font-semibold text-slate-800 text-sm uppercase tracking-wide">Sourcing / Review</h3>
+            </div>
+            <span id="badge-sourcing" class="text-xs font-bold bg-white text-slate-600 px-2 py-0.5 rounded-full shadow-sm">0</span>
+          </div>
+          <div id="col-sourcing" data-status="sourcing" class="kanban-col space-y-3 flex-1 overflow-y-auto" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)"></div>
+        </div>
+
+        <!-- 3. Purchasing / PO -->
+        <div class="bg-slate-100/70 p-4 rounded-xl border border-slate-200 flex flex-col">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-blue-500"></span>
+              <h3 class="font-semibold text-slate-800 text-sm uppercase tracking-wide">PO / Pembelian</h3>
+            </div>
+            <span id="badge-purchasing" class="text-xs font-bold bg-white text-slate-600 px-2 py-0.5 rounded-full shadow-sm">0</span>
+          </div>
+          <div id="col-purchasing" data-status="purchasing" class="kanban-col space-y-3 flex-1 overflow-y-auto" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)"></div>
+        </div>
+
+        <!-- 4. Done / Delivered -->
+        <div class="bg-slate-100/70 p-4 rounded-xl border border-slate-200 flex flex-col">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+              <h3 class="font-semibold text-slate-800 text-sm uppercase tracking-wide">Selesai / Diterima</h3>
+            </div>
+            <span id="badge-done" class="text-xs font-bold bg-white text-slate-600 px-2 py-0.5 rounded-full shadow-sm">0</span>
+          </div>
+          <div id="col-done" data-status="done" class="kanban-col space-y-3 flex-1 overflow-y-auto" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL DETAIL / FORM PENGAJUAN BARU -->
+  <div id="modal-request" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
+      <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+        <h3 class="font-bold text-slate-800 text-lg">Buat Form Permintaan Barang</h3>
+        <button onclick="toggleModal(false)" class="text-slate-400 hover:text-slate-700">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="request-form" onsubmit="handleCreateRequest(event)" class="p-6 overflow-y-auto space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Item / Barang *</label>
+          <input type="text" id="req-item" required placeholder="Contoh: Laptop Developer" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Brand / Merk *</label>
+            <input type="text" id="req-brand" required placeholder="Contoh: Apple / Dell" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Tipe / Model *</label>
+            <input type="text" id="req-type" required placeholder="Contoh: MacBook Pro M3 16GB" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Estimasi Budget (IDR) *</label>
+          <input type="number" id="req-budget" min="0" required placeholder="25000000" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Deskripsi & Justifikasi Kebutuhan</label>
+          <textarea id="req-desc" rows="3" placeholder="Sertakan alasan pengadaan dan spesifikasi tambahan..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Foto Referensi Barang (Opsional)</label>
+          <input type="file" id="req-photo" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer" />
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2 border-t border-slate-100">
+          <button type="button" onclick="toggleModal(false)" class="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg">Batal</button>
+          <button type="submit" class="px-5 py-2 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium shadow">Submit Permintaan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // 1. DATA USER HARDCODE
+    const USERS = [
+      { username: 'user1', password: 'user123', role: 'user', name: 'User Requester 1' },
+      { username: 'user2', password: 'user123', role: 'user', name: 'User Requester 2' },
+      { username: 'procure', password: 'admin123', role: 'procurement', name: 'Tim Procurement' }
+    ];
+
+    // Status mapping & labels
+    const STATUS_MAP = {
+      requested: { label: 'Pengajuan Masuk', color: 'bg-slate-100 text-slate-700 border-slate-200' },
+      sourcing: { label: 'Sourcing / Review', color: 'bg-amber-100 text-amber-700 border-amber-200' },
+      purchasing: { label: 'PO / Pembelian', color: 'bg-blue-100 text-blue-700 border-blue-200' },
+      done: { label: 'Selesai / Diterima', color: 'bg-emerald-100 text-emerald-700 border-emerald-200' }
+    };
+
+    // State
+    let currentUser = null;
+    let requests = [];
+
+    // Init data dari LocalStorage
+    function initData() {
+      const stored = localStorage.getItem('procureflow_requests');
+      if (stored) {
+        requests = JSON.parse(stored);
+      } else {
+        // Data inisial jika kosong
+        requests = [
+          {
+            id: 'REQ-101',
+            createdBy: 'user1',
+            creatorName: 'User Requester 1',
+            item: 'Dell UltraSharp 27" 4K',
+            brand: 'Dell',
+            type: 'U2723QE',
+            budget: 8500000,
+            desc: 'Monitor tambahan untuk kebutuhan UI/UX & design dev',
+            photo: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=300&q=80',
+            status: 'requested',
+            date: '2026-09-08'
+          },
+          {
+            id: 'REQ-102',
+            createdBy: 'user1',
+            creatorName: 'User Requester 1',
+            item: 'Keychron Q1 Pro',
+            brand: 'Keychron',
+            type: 'Wireless Custom Mechanical',
+            budget: 2800000,
+            desc: 'Keyboard wireless ergonomic',
+            photo: '',
+            status: 'sourcing',
+            date: '2026-09-09'
+          },
+          {
+            id: 'REQ-103',
+            createdBy: 'user2',
+            creatorName: 'User Requester 2',
+            item: 'MacBook Air M2 16GB',
+            brand: 'Apple',
+            type: 'Midnight 512GB SSD',
+            budget: 18500000,
+            desc: 'Pergantian laptop lama yang sudah rusak baterai',
+            photo: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=300&q=80',
+            status: 'purchasing',
+            date: '2026-09-07'
+          }
+        ];
+        saveData();
+      }
+      
+      const savedUser = sessionStorage.getItem('procureflow_user');
+      if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+        renderApp();
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem('procureflow_requests', JSON.stringify(requests));
+    }
+
+    // Format Rupiah
+    function formatIDR(val) {
+      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);
+    }
+
+    // Handlers
+    function handleLogin(e) {
+      e.preventDefault();
+      const u = document.getElementById('login-username').value.trim();
+      const p = document.getElementById('login-password').value.trim();
+      const errorEl = document.getElementById('login-error');
+
+      const found = USERS.find(user => user.username === u && user.password === p);
+
+      if (found) {
+        currentUser = found;
+        sessionStorage.setItem('procureflow_user', JSON.stringify(found));
+        errorEl.classList.add('hidden');
+        renderApp();
+      } else {
+        errorEl.textContent = 'Username atau Password salah. Silakan cek akun demo.';
+        errorEl.classList.remove('hidden');
+      }
+    }
+
+    function handleLogout() {
+      sessionStorage.removeItem('procureflow_user');
+      currentUser = null;
+      document.getElementById('login-username').value = '';
+      document.getElementById('login-password').value = '';
+      renderApp();
+    }
+
+    function renderApp() {
+      const loginView = document.getElementById('login-view');
+      const userView = document.getElementById('user-view');
+      const procurementView = document.getElementById('procurement-view');
+      const navbar = document.getElementById('navbar');
+
+      if (!currentUser) {
+        loginView.classList.remove('hidden');
+        userView.classList.add('hidden');
+        procurementView.classList.add('hidden');
+        navbar.classList.add('hidden');
+        return;
+      }
+
+      // Tampilkan Navbar
+      loginView.classList.add('hidden');
+      navbar.classList.remove('hidden');
+      document.getElementById('nav-user-name').textContent = currentUser.name;
+      document.getElementById('nav-user-role').textContent = currentUser.role;
+
+      const badge = document.getElementById('role-badge');
+      if (currentUser.role === 'procurement') {
+        badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-purple-100 text-purple-800';
+        badge.textContent = 'Procurement Board';
+        userView.classList.add('hidden');
+        procurementView.classList.remove('hidden');
+        renderProcurementBoard();
+      } else {
+        badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-blue-100 text-blue-800';
+        badge.textContent = 'User Dashboard';
+        procurementView.classList.add('hidden');
+        userView.classList.remove('hidden');
+        renderUserDashboard();
+      }
+
+      lucide.createIcons();
+    }
+
+    // 2. RENDER USER VIEW
+    function renderUserDashboard() {
+      const tableBody = document.getElementById('user-requests-table');
+      const emptyState = document.getElementById('user-empty-state');
+      tableBody.innerHTML = '';
+
+      const myRequests = requests.filter(r => r.createdBy === currentUser.username);
+
+      if (myRequests.length === 0) {
+        emptyState.classList.remove('hidden');
+        return;
+      } else {
+        emptyState.classList.add('hidden');
+      }
+
+      myRequests.forEach(req => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
+        
+        const photoHtml = req.photo 
+          ? `<img src="${req.photo}" class="w-10 h-10 object-cover rounded-lg border border-slate-200" alt="Preview"/>` 
+          : `<span class="text-xs text-slate-400 italic">No image</span>`;
+
+        tr.innerHTML = `
+          <td class="px-5 py-4">
+            <div class="font-semibold text-slate-900">${req.item}</div>
+            <div class="text-xs text-slate-500">${req.brand} • <span class="font-mono">${req.id}</span></div>
+          </td>
+          <td class="px-5 py-4">
+            <div class="text-slate-800">${req.type}</div>
+            <div class="text-xs text-slate-500 max-w-xs truncate">${req.desc || '-'}</div>
+          </td>
+          <td class="px-5 py-4 font-semibold text-slate-900">${formatIDR(req.budget)}</td>
+          <td class="px-5 py-4">${photoHtml}</td>
+          <td class="px-5 py-4 text-xs text-slate-500">${req.date}</td>
+          <td class="px-5 py-4">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium border ${STATUS_MAP[req.status].color}">
+              ${STATUS_MAP[req.status].label}
+            </span>
+          </td>
+        `;
+        tableBody.appendChild(tr);
+      });
+    }
+
+    // 3. RENDER PROCUREMENT KANBAN (Jira/Notion Style)
+    function renderProcurementBoard() {
+      const columns = ['requested', 'sourcing', 'purchasing', 'done'];
+      columns.forEach(col => {
+        const colContainer = document.getElementById(`col-${col}`);
+        colContainer.innerHTML = '';
+      });
+
+      const counts = { requested: 0, sourcing: 0, purchasing: 0, done: 0 };
+
+      requests.forEach(req => {
+        counts[req.status] = (counts[req.status] || 0) + 1;
+        const colContainer = document.getElementById(`col-${req.status}`);
+        if (!colContainer) return;
+
+        const card = document.createElement('div');
+        card.id = `card-${req.id}`;
+        card.draggable = true;
+        card.ondragstart = (e) => handleDragStart(e, req.id);
+        card.className = 'bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition cursor-grab active:cursor-grabbing';
+
+        const photoPreview = req.photo 
+          ? `<img src="${req.photo}" class="w-full h-28 object-cover rounded-lg mb-2 border border-slate-100" />`
+          : '';
+
+        card.innerHTML = `
+          ${photoPreview}
+          <div class="flex justify-between items-start gap-2 mb-1.5">
+            <span class="text-[10px] font-mono font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">${req.id}</span>
+            <span class="text-xs font-medium text-slate-500">${req.date}</span>
+          </div>
+          <h4 class="font-bold text-slate-900 text-sm leading-snug">${req.item}</h4>
+          <p class="text-xs text-slate-600 mt-0.5 font-medium">${req.brand} •${req.type}</p>
+          <p class="text-xs text-slate-500 mt-1.5 line-clamp-2">${req.desc || 'Tanpa deskripsi spesifik.'}</p>
+          
+          <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between">
+            <div class="text-xs font-semibold text-emerald-600">${formatIDR(req.budget)}</div>
+            <div class="flex items-center gap-1 text-[11px] text-slate-400">
+              <i data-lucide="user" class="w-3 h-3"></i>
+              <span>${req.createdBy}</span>
+            </div>
+          </div>
+        `;
+        colContainer.appendChild(card);
+      });
+
+      // Update badge counts
+      columns.forEach(col => {
+        document.getElementById(`badge-${col}`).textContent = counts[col] || 0;
+      });
+
+      lucide.createIcons();
+    }
+
+    // MODAL HANDLERS
+    function toggleModal(show) {
+      const modal = document.getElementById('modal-request');
+      if (show) {
+        modal.classList.remove('hidden');
+      } else {
+        modal.classList.add('hidden');
+        document.getElementById('request-form').reset();
+      }
+    }
+
+    // HANDLE TAMBAH DATA (USER)
+    function handleCreateRequest(e) {
+      e.preventDefault();
+      const item = document.getElementById('req-item').value;
+      const brand = document.getElementById('req-brand').value;
+      const type = document.getElementById('req-type').value;
+      const budget = document.getElementById('req-budget').value;
+      const desc = document.getElementById('req-desc').value;
+      const photoFile = document.getElementById('req-photo').files[0];
+
+      const newId = 'REQ-' + Math.floor(1000 + Math.random() * 9000);
+      const today = new Date().toISOString().split('T')[0];
+
+      const executeSave = (photoBase64 = '') => {
+        const newRequest = {
+          id: newId,
+          createdBy: currentUser.username,
+          creatorName: currentUser.name,
+          item,
+          brand,
+          type,
+          budget: Number(budget),
+          desc,
+          photo: photoBase64,
+          status: 'requested',
+          date: today
+        };
+        requests.unshift(newRequest);
+        saveData();
+        toggleModal(false);
+        renderApp();
+      };
+
+      if (photoFile) {
+        const reader = new FileReader();
+        reader.onloadend = () => executeSave(reader.result);
+        reader.readAsDataURL(photoFile);
+      } else {
+        executeSave();
+      }
+    }
+
+    // DRAG AND DROP (Jira / Notion Style)
+    function handleDragStart(e, id) {
+      e.dataTransfer.setData('text/plain', id);
+      e.dataTransfer.effectAllowed = 'move';
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.currentTarget.classList.add('drag-over');
+    }
+
+    function handleDragLeave(e) {
+      e.currentTarget.classList.remove('drag-over');
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('drag-over');
+      const reqId = e.dataTransfer.getData('text/plain');
+      const targetStatus = e.currentTarget.getAttribute('data-status');
+
+      const targetReq = requests.find(r => r.id === reqId);
+      if (targetReq && targetReq.status !== targetStatus) {
+        targetReq.status = targetStatus;
+        saveData();
+        renderProcurementBoard();
+      }
+    }
+
+    // Jalankan inisialisasi saat window load
+    window.onload = () => {
+      initData();
+      renderApp();
+    };
+  </script>
+</body>
+</html>
