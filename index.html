@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ProcureFlow • Modern Procurement Management</title>
+  <title>Procurement • Management System</title>
   
   <!-- Font Modern: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -80,10 +80,10 @@
       </div>
       <div>
         <div class="flex items-center gap-2">
-          <span class="font-extrabold tracking-tight text-slate-900 text-base">Procure<span class="text-emerald-700">Flow</span></span>
+          <!-- Diubah menjadi Procurement & sub-judul dihilangkan -->
+          <span class="font-extrabold tracking-tight text-slate-900 text-base">Procurement</span>
           <span id="role-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wide border"></span>
         </div>
-        <p class="text-[11px] text-slate-500 font-medium leading-none mt-0.5">Corporate Procurement Portal</p>
       </div>
     </div>
 
@@ -102,7 +102,6 @@
   <!-- ================= MAIN CONTENT ================= -->
   <main class="flex-1 flex flex-col relative overflow-hidden">
 
-    <!-- Subtle Background Decor -->
     <div class="absolute top-0 right-1/4 -z-10 w-96 h-96 bg-emerald-100/40 rounded-full blur-3xl pointer-events-none"></div>
     <div class="absolute bottom-10 left-10 -z-10 w-80 h-80 bg-teal-100/30 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -113,7 +112,7 @@
           <div class="inline-flex items-center justify-center w-14 h-14 bg-emerald-50 border border-emerald-100 rounded-2xl text-emerald-700 shadow-inner mb-3.5">
             <i data-lucide="package-search" class="w-7 h-7"></i>
           </div>
-          <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">Procure<span class="text-emerald-700">Flow</span></h1>
+          <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">Procurement Portal</h1>
           <p class="text-xs text-slate-500 mt-1 font-medium">Sistem Pengajuan & Monitoring Pengadaan Perusahaan</p>
         </div>
 
@@ -160,7 +159,6 @@
 
     <!-- 2. USER VIEW (REQUESTER) -->
     <section id="user-view" class="hidden p-6 max-w-6xl mx-auto w-full flex-1">
-      <!-- Header Banner User -->
       <div class="bg-gradient-to-r from-emerald-900 via-emerald-800 to-emerald-700 text-white rounded-3xl p-6 sm:p-8 mb-8 shadow-lg shadow-emerald-950/10 relative overflow-hidden flex flex-col sm:flex-row justify-between sm:items-center gap-5">
         <div class="relative z-10">
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-emerald-200 text-xs font-semibold mb-3">
@@ -174,7 +172,6 @@
           <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-700"></i>
           Buat Permintaan Baru
         </button>
-        <!-- Decor pattern -->
         <div class="absolute right-0 bottom-0 opacity-10 translate-x-10 translate-y-10">
           <i data-lucide="shopping-cart" class="w-64 h-64 text-white"></i>
         </div>
@@ -200,7 +197,7 @@
               </tr>
             </thead>
             <tbody id="user-requests-table" class="divide-y divide-slate-100">
-              <!-- Item di-generate via JS -->
+              <!-- Render via JS -->
             </tbody>
           </table>
         </div>
@@ -215,13 +212,13 @@
       </div>
     </section>
 
-    <!-- 3. PROCUREMENT VIEW (KANBAN NOTION / JIRA STYLE) -->
-    <section id="procurement-view" class="hidden p-6 w-full flex-1 flex flex-col max-w-[1400px] mx-auto">
-      <!-- Title & Filter Header -->
+    <!-- 3. PROCUREMENT VIEW (KANBAN BOARD 6 KOLOM) -->
+    <section id="procurement-view" class="hidden p-6 w-full flex-1 flex flex-col max-w-full mx-auto">
       <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6">
         <div>
           <div class="flex items-center gap-2">
-            <h2 class="text-2xl font-extrabold tracking-tight text-slate-900">Procurement Kanban Board</h2>
+            <!-- Diubah menjadi Procurement Board -->
+            <h2 class="text-2xl font-extrabold tracking-tight text-slate-900">Procurement Board</h2>
             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">Live Workspace</span>
           </div>
           <p class="text-xs text-slate-500 mt-1">Geser kartu antarkolom untuk memperbarui status pengadaan secara langsung.</p>
@@ -235,55 +232,79 @@
         </div>
       </div>
 
-      <!-- KANBAN BOARD 4 KOLOM -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 flex-1">
+      <!-- KANBAN BOARD 6 KOLOM (SUBMITTED, SOURCING, REVIEW, HOLD, PO, COMPLETED) -->
+      <div class="flex gap-4 overflow-x-auto pb-4 flex-1 items-start">
         
-        <!-- KOLOM 1: REQUESTED -->
-        <div class="bg-slate-100/80 border border-slate-200/70 p-4 rounded-2xl flex flex-col">
+        <!-- KOLOM 1: SUBMITTED -->
+        <div class="bg-slate-100/80 border border-slate-200/70 p-4 rounded-2xl flex flex-col w-80 shrink-0">
           <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-200/70">
             <div class="flex items-center gap-2">
               <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
-              <h3 class="font-bold text-slate-700 text-xs uppercase tracking-wider">Pengajuan Masuk</h3>
+              <h3 class="font-bold text-slate-700 text-xs uppercase tracking-wider">SUBMITTED</h3>
             </div>
-            <span id="badge-requested" class="text-xs font-bold bg-white text-slate-600 px-2.5 py-0.5 rounded-lg border border-slate-200 shadow-sm">0</span>
+            <span id="badge-submitted" class="text-xs font-bold bg-white text-slate-600 px-2.5 py-0.5 rounded-lg border border-slate-200 shadow-sm">0</span>
           </div>
-          <div id="col-requested" data-status="requested" class="kanban-column space-y-3 flex-1 overflow-y-auto p-0.5" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)"></div>
+          <div id="col-submitted" data-status="submitted" class="kanban-column space-y-3 flex-1 overflow-y-auto p-0.5" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)"></div>
         </div>
 
         <!-- KOLOM 2: SOURCING -->
-        <div class="bg-amber-50/50 border border-amber-200/60 p-4 rounded-2xl flex flex-col">
+        <div class="bg-amber-50/50 border border-amber-200/60 p-4 rounded-2xl flex flex-col w-80 shrink-0">
           <div class="flex items-center justify-between pb-3 mb-3 border-b border-amber-200/60">
             <div class="flex items-center gap-2">
               <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-              <h3 class="font-bold text-amber-900 text-xs uppercase tracking-wider">Sourcing & Review</h3>
+              <h3 class="font-bold text-amber-900 text-xs uppercase tracking-wider">SOURCING</h3>
             </div>
             <span id="badge-sourcing" class="text-xs font-bold bg-white text-amber-800 px-2.5 py-0.5 rounded-lg border border-amber-200 shadow-sm">0</span>
           </div>
           <div id="col-sourcing" data-status="sourcing" class="kanban-column space-y-3 flex-1 overflow-y-auto p-0.5" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)"></div>
         </div>
 
-        <!-- KOLOM 3: PURCHASING (PO) -->
-        <div class="bg-emerald-50/50 border border-emerald-200/60 p-4 rounded-2xl flex flex-col">
+        <!-- KOLOM 3: REVIEW -->
+        <div class="bg-indigo-50/50 border border-indigo-200/60 p-4 rounded-2xl flex flex-col w-80 shrink-0">
+          <div class="flex items-center justify-between pb-3 mb-3 border-b border-indigo-200/60">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+              <h3 class="font-bold text-indigo-900 text-xs uppercase tracking-wider">REVIEW</h3>
+            </div>
+            <span id="badge-review" class="text-xs font-bold bg-white text-indigo-800 px-2.5 py-0.5 rounded-lg border border-indigo-200 shadow-sm">0</span>
+          </div>
+          <div id="col-review" data-status="review" class="kanban-column space-y-3 flex-1 overflow-y-auto p-0.5" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)"></div>
+        </div>
+
+        <!-- KOLOM 4: HOLD -->
+        <div class="bg-rose-50/50 border border-rose-200/60 p-4 rounded-2xl flex flex-col w-80 shrink-0">
+          <div class="flex items-center justify-between pb-3 mb-3 border-b border-rose-200/60">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+              <h3 class="font-bold text-rose-900 text-xs uppercase tracking-wider">HOLD</h3>
+            </div>
+            <span id="badge-hold" class="text-xs font-bold bg-white text-rose-800 px-2.5 py-0.5 rounded-lg border border-rose-200 shadow-sm">0</span>
+          </div>
+          <div id="col-hold" data-status="hold" class="kanban-column space-y-3 flex-1 overflow-y-auto p-0.5" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)"></div>
+        </div>
+
+        <!-- KOLOM 5: PO -->
+        <div class="bg-emerald-50/50 border border-emerald-200/60 p-4 rounded-2xl flex flex-col w-80 shrink-0">
           <div class="flex items-center justify-between pb-3 mb-3 border-b border-emerald-200/60">
             <div class="flex items-center gap-2">
               <span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
-              <h3 class="font-bold text-emerald-950 text-xs uppercase tracking-wider">PO / Pembelian</h3>
+              <h3 class="font-bold text-emerald-950 text-xs uppercase tracking-wider">PO</h3>
             </div>
-            <span id="badge-purchasing" class="text-xs font-bold bg-white text-emerald-800 px-2.5 py-0.5 rounded-lg border border-emerald-200 shadow-sm">0</span>
+            <span id="badge-po" class="text-xs font-bold bg-white text-emerald-800 px-2.5 py-0.5 rounded-lg border border-emerald-200 shadow-sm">0</span>
           </div>
-          <div id="col-purchasing" data-status="purchasing" class="kanban-column space-y-3 flex-1 overflow-y-auto p-0.5" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)"></div>
+          <div id="col-po" data-status="po" class="kanban-column space-y-3 flex-1 overflow-y-auto p-0.5" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)"></div>
         </div>
 
-        <!-- KOLOM 4: DONE -->
-        <div class="bg-teal-50/50 border border-teal-200/60 p-4 rounded-2xl flex flex-col">
+        <!-- KOLOM 6: COMPLETED -->
+        <div class="bg-teal-50/50 border border-teal-200/60 p-4 rounded-2xl flex flex-col w-80 shrink-0">
           <div class="flex items-center justify-between pb-3 mb-3 border-b border-teal-200/60">
             <div class="flex items-center gap-2">
               <span class="w-2.5 h-2.5 rounded-full bg-teal-600"></span>
-              <h3 class="font-bold text-teal-950 text-xs uppercase tracking-wider">Selesai / Diterima</h3>
+              <h3 class="font-bold text-teal-950 text-xs uppercase tracking-wider">COMPLETED</h3>
             </div>
-            <span id="badge-done" class="text-xs font-bold bg-white text-teal-800 px-2.5 py-0.5 rounded-lg border border-teal-200 shadow-sm">0</span>
+            <span id="badge-completed" class="text-xs font-bold bg-white text-teal-800 px-2.5 py-0.5 rounded-lg border border-teal-200 shadow-sm">0</span>
           </div>
-          <div id="col-done" data-status="done" class="kanban-column space-y-3 flex-1 overflow-y-auto p-0.5" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)"></div>
+          <div id="col-completed" data-status="completed" class="kanban-column space-y-3 flex-1 overflow-y-auto p-0.5" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)"></div>
         </div>
 
       </div>
@@ -292,7 +313,7 @@
 
   <!-- ================= MODAL PENGAJUAN BARU ================= -->
   <div id="modal-request" class="hidden fixed inset-0 z-50 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-100 flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-100 flex flex-col max-h-[90vh]">
       
       <div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-gradient-to-r from-emerald-900 to-emerald-800 text-white">
         <div>
@@ -349,32 +370,42 @@
 
   <!-- ================= JAVASCRIPT LOGIC ================= -->
   <script>
-    // 1. HARDCODED USERS
+    // HARDCODED USERS
     const USERS = [
       { username: 'user1', password: 'user123', role: 'user', name: 'Alif Pratama (Div. Tech)' },
       { username: 'user2', password: 'user123', role: 'user', name: 'Dina Lestari (Div. Operasional)' },
       { username: 'procure', password: 'admin123', role: 'procurement', name: 'Bayu Wicaksono (Procurement Officer)' }
     ];
 
-    // Status Styling & Label (Modern Green/Emerald/Amber Palettes)
+    // Status Mapping untuk 6 Tahapan Baru
     const STATUS_MAP = {
-      requested: {
-        label: 'Pengajuan Masuk',
+      submitted: {
+        label: 'SUBMITTED',
         badge: 'bg-slate-100 text-slate-700 border-slate-200',
         dot: 'bg-slate-400'
       },
       sourcing: {
-        label: 'Sourcing & Review',
+        label: 'SOURCING',
         badge: 'bg-amber-100/80 text-amber-800 border-amber-200',
         dot: 'bg-amber-500'
       },
-      purchasing: {
-        label: 'PO / Pembelian',
+      review: {
+        label: 'REVIEW',
+        badge: 'bg-indigo-100 text-indigo-800 border-indigo-200',
+        dot: 'bg-indigo-600'
+      },
+      hold: {
+        label: 'HOLD',
+        badge: 'bg-rose-100 text-rose-800 border-rose-200',
+        dot: 'bg-rose-600'
+      },
+      po: {
+        label: 'PO',
         badge: 'bg-emerald-100 text-emerald-800 border-emerald-200',
         dot: 'bg-emerald-600'
       },
-      done: {
-        label: 'Selesai / Diterima',
+      completed: {
+        label: 'COMPLETED',
         badge: 'bg-teal-100 text-teal-800 border-teal-200',
         dot: 'bg-teal-600'
       }
@@ -383,65 +414,71 @@
     let currentUser = null;
     let requests = [];
 
-    // Inisialisasi Data dari LocalStorage
     function initData() {
       const stored = localStorage.getItem('procureflow_requests');
       if (stored) {
-        requests = JSON.parse(stored);
+        // Normalisasi status lama jika ada yang masih tersimpan di browser
+        const temp = JSON.parse(stored);
+        requests = temp.map(r => {
+          if (r.status === 'requested') r.status = 'submitted';
+          if (r.status === 'purchasing') r.status = 'po';
+          if (r.status === 'done') r.status = 'completed';
+          return r;
+        });
+        saveData();
       } else {
-        // Mock data awal bertema profesional
         requests = [
           {
-            id: 'REQ-2026-001',
+            id: 'REQ-101',
             createdBy: 'user1',
             creatorName: 'Alif Pratama',
-            item: 'Dell UltraSharp 27" 4K USB-C Hub',
+            item: 'Dell UltraSharp 27" 4K',
             brand: 'Dell',
-            type: 'U2723QE IPS Black',
-            budget: 9200000,
-            desc: 'Monitor resolusi tinggi untuk color grading & UX development tim frontend.',
+            type: 'U2723QE',
+            budget: 8500000,
+            desc: 'Monitor tambahan untuk kebutuhan UI/UX & design dev',
             photo: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&q=80',
-            status: 'requested',
+            status: 'submitted',
             date: '2026-09-08'
           },
           {
-            id: 'REQ-2026-002',
+            id: 'REQ-102',
             createdBy: 'user1',
             creatorName: 'Alif Pratama',
-            item: 'Ergonomic Standing Desk Frame',
-            brand: 'Stramm',
-            type: 'Dual Motor Height Adjustable',
-            budget: 5400000,
-            desc: 'Penggantian meja kerja standard untuk health posture compliance.',
+            item: 'Keychron Q1 Pro',
+            brand: 'Keychron',
+            type: 'Wireless Custom Mechanical',
+            budget: 2800000,
+            desc: 'Keyboard wireless ergonomic',
             photo: '',
             status: 'sourcing',
             date: '2026-09-09'
           },
           {
-            id: 'REQ-2026-003',
-            createdBy: 'user2',
-            creatorName: 'Dina Lestari',
-            item: 'MacBook Pro 14" M3 Pro',
-            brand: 'Apple',
-            type: '18GB RAM / 512GB Space Black',
-            budget: 28999000,
-            desc: 'Upgrade workstation unit analis data pemrosesan model machine learning.',
-            photo: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&q=80',
-            status: 'purchasing',
-            date: '2026-09-07'
+            id: 'REQ-1652',
+            createdBy: 'user1',
+            creatorName: 'Alif Pratama',
+            item: 'Handphone',
+            brand: 'Iphone 17',
+            type: 'Pro Max',
+            budget: 30000000,
+            desc: 'Kebutuhan tim testing kamera & apps',
+            photo: '',
+            status: 'po',
+            date: '2026-09-10'
           },
           {
-            id: 'REQ-2026-004',
+            id: 'REQ-103',
             createdBy: 'user2',
             creatorName: 'Dina Lestari',
-            item: 'Sony Wireless Headset Noise Cancelling',
-            brand: 'Sony',
-            type: 'WH-1000XM5 Silver',
-            budget: 4500000,
-            desc: 'Perangkat penunjang virtual meeting klien internasional tanpa bising.',
-            photo: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=400&q=80',
-            status: 'done',
-            date: '2026-09-04'
+            item: 'MacBook Air M2 16GB',
+            brand: 'Apple',
+            type: 'Midnight 512GB SSD',
+            budget: 18500000,
+            desc: 'Pergantian laptop lama yang sudah rusak baterai',
+            photo: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&q=80',
+            status: 'completed',
+            date: '2026-09-07'
           }
         ];
         saveData();
@@ -462,7 +499,6 @@
       return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);
     }
 
-    // AUTH HANDLERS
     function handleLogin(e) {
       e.preventDefault();
       const u = document.getElementById('login-username').value.trim();
@@ -491,7 +527,6 @@
       renderApp();
     }
 
-    // MAIN RENDER CONTROLLER
     function renderApp() {
       const loginView = document.getElementById('login-view');
       const userView = document.getElementById('user-view');
@@ -530,7 +565,6 @@
       lucide.createIcons();
     }
 
-    // RENDER USER DASHBOARD
     function renderUserDashboard() {
       const tableBody = document.getElementById('user-requests-table');
       const emptyState = document.getElementById('user-empty-state');
@@ -555,6 +589,8 @@
           ? `<img src="${req.photo}" class="w-11 h-11 object-cover rounded-xl border border-slate-200 shadow-sm" alt="Foto Item"/>`
           : `<div class="w-11 h-11 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 text-[10px] font-semibold">No Pict</div>`;
 
+        const statConfig = STATUS_MAP[req.status] || STATUS_MAP['submitted'];
+
         tr.innerHTML = `
           <td class="px-6 py-4">
             <div class="font-bold text-slate-900 leading-tight">${req.item}</div>
@@ -578,9 +614,9 @@
             ${req.date}
           </td>
           <td class="px-6 py-4">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${STATUS_MAP[req.status].badge}">
-              <span class="w-1.5 h-1.5 rounded-full ${STATUS_MAP[req.status].dot}"></span>
-              ${STATUS_MAP[req.status].label}
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${statConfig.badge}">
+              <span class="w-1.5 h-1.5 rounded-full ${statConfig.dot}"></span>
+              ${statConfig.label}
             </span>
           </td>
         `;
@@ -588,19 +624,21 @@
       });
     }
 
-    // RENDER PROCUREMENT KANBAN BOARD
     function renderProcurementBoard() {
-      const columns = ['requested', 'sourcing', 'purchasing', 'done'];
+      // 6 Kolom Kanban
+      const columns = ['submitted', 'sourcing', 'review', 'hold', 'po', 'completed'];
+      const counts = { submitted: 0, sourcing: 0, review: 0, hold: 0, po: 0, completed: 0 };
+
       columns.forEach(col => {
         const colContainer = document.getElementById(`col-${col}`);
-        colContainer.innerHTML = '';
+        if (colContainer) colContainer.innerHTML = '';
       });
 
-      const counts = { requested: 0, sourcing: 0, purchasing: 0, done: 0 };
-
       requests.forEach(req => {
-        counts[req.status] = (counts[req.status] || 0) + 1;
-        const colContainer = document.getElementById(`col-${req.status}`);
+        const currentStatus = STATUS_MAP[req.status] ? req.status : 'submitted';
+        counts[currentStatus] = (counts[currentStatus] || 0) + 1;
+        
+        const colContainer = document.getElementById(`col-${currentStatus}`);
         if (!colContainer) return;
 
         const card = document.createElement('div');
@@ -643,15 +681,14 @@
         colContainer.appendChild(card);
       });
 
-      // Update badge angka di atas kolom
       columns.forEach(col => {
-        document.getElementById(`badge-${col}`).textContent = counts[col] || 0;
+        const badge = document.getElementById(`badge-${col}`);
+        if (badge) badge.textContent = counts[col] || 0;
       });
 
       lucide.createIcons();
     }
 
-    // MODAL MODIFIERS
     function toggleModal(show) {
       const modal = document.getElementById('modal-request');
       if (show) {
@@ -663,7 +700,6 @@
       lucide.createIcons();
     }
 
-    // CREATE REQUEST (SUBMIT)
     function handleCreateRequest(e) {
       e.preventDefault();
       const item = document.getElementById('req-item').value;
@@ -673,7 +709,7 @@
       const desc = document.getElementById('req-desc').value;
       const photoFile = document.getElementById('req-photo').files[0];
 
-      const newId = 'REQ-2026-' + Math.floor(100 + Math.random() * 900);
+      const newId = 'REQ-' + Math.floor(1000 + Math.random() * 9000);
       const today = new Date().toISOString().split('T')[0];
 
       const saveNewData = (photoBase64 = '') => {
@@ -687,7 +723,7 @@
           budget: Number(budget),
           desc,
           photo: photoBase64,
-          status: 'requested',
+          status: 'submitted',
           date: today
         };
         requests.unshift(newReq);
@@ -705,7 +741,6 @@
       }
     }
 
-    // DRAG AND DROP NOTION/JIRA LOGIC
     function handleDragStart(e, id) {
       e.dataTransfer.setData('text/plain', id);
       e.dataTransfer.effectAllowed = 'move';
@@ -734,7 +769,6 @@
       }
     }
 
-    // Auto-boot
     window.onload = () => {
       initData();
       renderApp();
