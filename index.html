@@ -96,7 +96,7 @@
             <i data-lucide="package-search" class="w-7 h-7"></i>
           </div>
           <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">Procurement Portal</h1>
-          <p class="text-xs text-slate-500 mt-1 font-medium">Sistem Pengajuan & Monitoring Pengadaan Perusahaan</p>
+          <p class="text-xs text-slate-500 mt-1 font-medium">Sistem Pengajuan & Monitoring Pengadaan Cloud Realtime</p>
         </div>
 
         <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
@@ -149,7 +149,7 @@
             Portal Requester Barang
           </div>
           <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Daftar Pengajuan Saya</h2>
-          <p class="text-emerald-100/80 text-xs sm:text-sm mt-1 max-w-xl">Lacak status PR, PIC procurement yang bertugas, perbarui nomor PR, dan berdiskusi langsung.</p>
+          <p class="text-emerald-100/80 text-xs sm:text-sm mt-1 max-w-xl">Lacak status PR, PIC procurement yang bertugas, perbarui nomor PR, dan berdiskusi langsung secara realtime.</p>
         </div>
         <button onclick="toggleModal(true)" class="relative z-10 bg-white text-emerald-900 hover:bg-emerald-50 px-5 py-3 rounded-2xl font-bold text-xs sm:text-sm shadow-md transition-all duration-150 flex items-center gap-2 shrink-0 self-start sm:self-auto">
           <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-700"></i>
@@ -202,7 +202,7 @@
         <div>
           <div class="flex items-center gap-2">
             <h2 class="text-2xl font-extrabold tracking-tight text-slate-900">Procurement Board</h2>
-            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">Live Workspace</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">Cloud Realtime</span>
           </div>
           <p class="text-xs text-slate-500 mt-0.5">Tugaskan PIC procurement, tetapkan harga penawaran riil, dan kelola proses pengadaan.</p>
         </div>
@@ -351,7 +351,7 @@
 
         <div class="pt-3 flex justify-end gap-2 border-t border-slate-100">
           <button type="button" onclick="toggleModal(false)" class="px-4 py-2.5 text-slate-600 hover:bg-slate-100 rounded-xl font-semibold transition">Batal</button>
-          <button type="submit" class="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-bold shadow-md shadow-emerald-700/20 transition">Kirim Pengajuan</button>
+          <button type="submit" id="btn-submit-req" class="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-bold shadow-md shadow-emerald-700/20 transition">Kirim Pengajuan</button>
         </div>
       </form>
     </div>
@@ -395,7 +395,7 @@
             </div>
           </div>
 
-          <!-- INPUT FORM: HAK AKSES PIC, PR, DAN REAL PRICE -->
+          <!-- INPUT FORM: PIC, PR, DAN REAL PRICE -->
           <div class="mt-4 p-3.5 bg-emerald-50/50 border border-emerald-200/70 rounded-2xl">
             <h4 class="text-xs font-bold text-emerald-950 flex items-center gap-1.5 mb-2.5">
               <i data-lucide="file-badge" class="w-4 h-4 text-emerald-700"></i>
@@ -489,12 +489,38 @@
     </div>
   </div>
 
-  <!-- ================= JAVASCRIPT LOGIC ================= -->
-  <script>
+  <!-- ================= FIREBASE & APP SCRIPT ================= -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { 
+      getFirestore, collection, onSnapshot, doc, setDoc, updateDoc 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // =========================================================================
+    // TEMPELKAN KODE CONFIG DARI PROJECT FIREBASE ANDA DI SINI
+    // =========================================================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyBVSp9gIeb7jG_TI2khJTRSNFlK0q28dD8",
+      authDomain: "procurement-kpp.firebaseapp.com",
+      projectId: "procurement-kpp",
+      storageBucket: "procurement-kpp.firebasestorage.app",
+      messagingSenderId: "189635163535",
+      appId: "1:189635163535:web:330ab69d78d6abade787fa"
+    };
+
+    // Inisialisasi Firebase & Firestore
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const requestsColRef = collection(db, "procurement_requests");
+
+    // DATA USER HARDCODED
     const USERS = [
-      { username: 'user1', password: 'user123', role: 'user', name: 'Alif Pratama (Div. Tech)' },
-      { username: 'user2', password: 'user123', role: 'user', name: 'Dina Lestari (Div. Operasional)' },
-      { username: 'procure', password: 'admin123', role: 'procurement', name: 'Bayu Wicaksono (Procurement Officer)' }
+      { username: 'PLANT', password: 'user123', role: 'user', name: 'PLANT' },
+      { username: 'ICT', password: 'user123', role: 'user', name: 'ICT' },
+      { username: 'kkb25028', password: 'admin123', role: 'procurement', name: 'Muhammad Fadhlan' },
+      { username: 'kkb16017', password: 'admin123', role: 'procurement', name: 'David P Manurung' },
+      { username: 'kkb11020', password: 'admin123', role: 'procurement', name: 'Erwin Dedi P' },
+      { username: 'kkb08007', password: 'admin123', role: 'procurement', name: 'Indri Kusumawardhani' }
     ];
 
     const STATUS_MAP = {
@@ -513,96 +539,35 @@
     let procureSearchTerm = '';
     let currentAttachedFile = null;
 
-    function initData() {
-      const stored = localStorage.getItem('procureflow_requests');
-      if (stored) {
-        requests = JSON.parse(stored);
-      } else {
-        requests = [
-          {
-            id: 'REQ-101',
-            createdBy: 'user1',
-            creatorName: 'Alif Pratama (Div. Tech)',
-            assignedTo: 'Bayu Wicaksono',
-            item: 'Dell UltraSharp 27" 4K',
-            brand: 'Dell',
-            type: 'U2723QE',
-            budget: 8500000,
-            realPrice: 8300000,
-            prNumber: 'PR-2026-D001',
-            desc: 'Monitor tambahan untuk kebutuhan UI/UX & design dev',
-            photo: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&q=80',
-            status: 'submitted',
-            date: '2026-09-08',
-            comments: [
-              { sender: 'user1', senderName: 'Alif Pratama', text: 'Nomor PR sudah saya cantumkan ya pak.', time: '09:30', file: null },
-              { sender: 'procure', senderName: 'Bayu Wicaksono', text: 'Siap, sedang dicarikan vendor rekanan.', time: '10:15', file: null }
-            ]
-          },
-          {
-            id: 'REQ-102',
-            createdBy: 'user1',
-            creatorName: 'Alif Pratama (Div. Tech)',
-            assignedTo: 'Bayu Wicaksono',
-            item: 'Keychron Q1 Pro',
-            brand: 'Keychron',
-            type: 'Wireless Custom Mechanical',
-            budget: 2800000,
-            realPrice: 2750000,
-            prNumber: '',
-            desc: 'Keyboard wireless ergonomic',
-            photo: '',
-            status: 'sourcing',
-            date: '2026-09-09',
-            comments: []
-          },
-          {
-            id: 'REQ-1652',
-            createdBy: 'user1',
-            creatorName: 'Alif Pratama (Div. Tech)',
-            assignedTo: 'Siti Rahmawati',
-            item: 'Handphone',
-            brand: 'Iphone 17',
-            type: 'Pro Max',
-            budget: 30000000,
-            realPrice: 29500000,
-            prNumber: 'PR-2026-IP09',
-            desc: 'Kebutuhan tim testing kamera & apps',
-            photo: '',
-            status: 'po',
-            date: '2026-09-10',
-            comments: []
-          },
-          {
-            id: 'REQ-103',
-            createdBy: 'user2',
-            creatorName: 'Dina Lestari (Div. Operasional)',
-            assignedTo: '',
-            item: 'MacBook Air M2 16GB',
-            brand: 'Apple',
-            type: 'Midnight 512GB SSD',
-            budget: 18500000,
-            realPrice: 18450000,
-            prNumber: 'PR-2026-MC02',
-            desc: 'Pergantian laptop lama yang sudah rusak baterai',
-            photo: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&q=80',
-            status: 'completed',
-            date: '2026-09-07',
-            comments: []
+    // Realtime Sync Listener Firestore
+    function listenToRealtimeData() {
+      onSnapshot(requestsColRef, (snapshot) => {
+        requests = [];
+        snapshot.forEach((docSnap) => {
+          requests.push(docSnap.data());
+        });
+        
+        // Urutkan berdasarkan waktu/id terbaru
+        requests.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+        // Jika modal sedang terbuka, perbarui isinya langsung
+        if (currentActiveTicketId) {
+          const activeReq = requests.find(r => r.id === currentActiveTicketId);
+          if (activeReq) {
+            renderTicketComments(activeReq);
           }
-        ];
-        saveData();
-      }
+        }
 
-      const savedUser = sessionStorage.getItem('procureflow_user');
-      if (savedUser) {
-        currentUser = JSON.parse(savedUser);
-        renderApp();
-      }
-    }
-
-    function saveData() {
-      localStorage.setItem('procureflow_requests', JSON.stringify(requests));
+        if (currentUser) {
+          if (currentUser.role === 'procurement') {
+            renderProcurementBoard();
+          } else {
+            renderUserDashboard();
+          }
+        }
+      }, (error) => {
+        console.error("Firestore sync error: ", error);
+      });
     }
 
     function formatIDR(val) {
@@ -610,8 +575,8 @@
       return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);
     }
 
-    // AUTH
-    function handleLogin(e) {
+    // Expose Handlers to Window
+    window.handleLogin = function(e) {
       e.preventDefault();
       const u = document.getElementById('login-username').value.trim();
       const p = document.getElementById('login-password').value.trim();
@@ -629,25 +594,25 @@
         errText.textContent = 'Username atau kata sandi tidak valid.';
         errBox.classList.remove('hidden');
       }
-    }
+    };
 
-    function handleLogout() {
+    window.handleLogout = function() {
       sessionStorage.removeItem('procureflow_user');
       currentUser = null;
       document.getElementById('login-username').value = '';
       document.getElementById('login-password').value = '';
       renderApp();
-    }
+    };
 
-    function handleUserSearch(e) {
+    window.handleUserSearch = function(e) {
       userSearchTerm = e.target.value.toLowerCase();
       renderUserDashboard();
-    }
+    };
 
-    function handleProcureSearch(e) {
+    window.handleProcureSearch = function(e) {
       procureSearchTerm = e.target.value.toLowerCase();
       renderProcurementBoard();
-    }
+    };
 
     function renderApp() {
       const loginView = document.getElementById('login-view');
@@ -687,7 +652,6 @@
       lucide.createIcons();
     }
 
-    // USER VIEW RENDER (DENGAN KOLOM PIC PROCUREMENT)
     function renderUserDashboard() {
       const tableBody = document.getElementById('user-requests-table');
       const emptyState = document.getElementById('user-empty-state');
@@ -727,7 +691,6 @@
         const statConfig = STATUS_MAP[req.status] || STATUS_MAP['submitted'];
         const commentsCount = req.comments ? req.comments.length : 0;
 
-        // PIC Badge untuk User
         const picBadge = req.assignedTo
           ? `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200/80"><i data-lucide="user-check" class="w-3 h-3 text-emerald-600"></i> ${req.assignedTo}</span>`
           : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-medium text-slate-400 italic bg-slate-100 border border-slate-200">Menunggu Penugasan</span>`;
@@ -745,9 +708,7 @@
             <div class="text-xs font-bold text-slate-800">${req.creatorName}</div>
             <div class="text-[10px] text-slate-400">@${req.createdBy}</div>
           </td>
-          <td class="px-5 py-4">
-            ${picBadge}
-          </td>
+          <td class="px-5 py-4">${picBadge}</td>
           <td class="px-5 py-4">
             <span class="text-xs font-mono font-bold px-2 py-1 bg-slate-100 rounded text-slate-800">${req.prNumber || '<span class="text-rose-500 font-medium">Belum Diisi</span>'}</span>
           </td>
@@ -776,7 +737,6 @@
       lucide.createIcons();
     }
 
-    // PROCUREMENT BOARD RENDER (DENGAN PIC BADGE PADA CARD)
     function renderProcurementBoard() {
       const columns = ['submitted', 'sourcing', 'review', 'hold', 'po', 'completed'];
       const counts = { submitted: 0, sourcing: 0, review: 0, hold: 0, po: 0, completed: 0 };
@@ -868,8 +828,7 @@
       lucide.createIcons();
     }
 
-    // MODAL DETAIL & EDIT LOGIC
-    function openTicketDetail(ticketId) {
+    window.openTicketDetail = function(ticketId) {
       currentActiveTicketId = ticketId;
       const req = requests.find(r => r.id === ticketId);
       if (!req) return;
@@ -908,9 +867,6 @@
       prInput.value = req.prNumber || '';
       realPriceInput.value = req.realPrice || '';
 
-      // HAK AKSES EDIT:
-      // USER: Hanya bisa edit No. PR
-      // PROCUREMENT: Bisa edit PIC yang bertugas & Real Price
       if (currentUser.role === 'user') {
         picInput.setAttribute('disabled', 'true');
         picHint.className = 'text-[9px] px-1.5 py-0.5 rounded font-medium bg-slate-200 text-slate-600';
@@ -943,9 +899,9 @@
 
       renderTicketComments(req);
       toggleTicketModal(true);
-    }
+    };
 
-    function toggleTicketModal(show) {
+    window.toggleTicketModal = function(show) {
       const modal = document.getElementById('modal-ticket-detail');
       if (show) {
         modal.classList.remove('hidden');
@@ -955,32 +911,32 @@
         clearAttachedFile();
       }
       lucide.createIcons();
-    }
+    };
 
-    function handleSaveTicketData() {
+    // UPDATE DATA KE FIRESTORE (REALTIME DI SEMUA LAPTOP)
+    window.handleSaveTicketData = async function() {
       if (!currentActiveTicketId) return;
-      const req = requests.find(r => r.id === currentActiveTicketId);
-      if (!req) return;
+      const docRef = doc(db, "procurement_requests", currentActiveTicketId);
 
-      if (currentUser.role === 'user') {
-        const prVal = document.getElementById('modal-input-pr').value.trim();
-        req.prNumber = prVal;
-        saveData();
-        alert('Nomor PR berhasil diperbarui oleh User!');
-      } else {
-        const picVal = document.getElementById('modal-input-pic').value.trim();
-        const realPriceVal = document.getElementById('modal-input-realprice').value;
-        req.assignedTo = picVal;
-        req.realPrice = realPriceVal ? Number(realPriceVal) : null;
-        saveData();
-        alert('PIC & Estimasi Real Price berhasil disimpan oleh Procurement!');
+      try {
+        if (currentUser.role === 'user') {
+          const prVal = document.getElementById('modal-input-pr').value.trim();
+          await updateDoc(docRef, { prNumber: prVal });
+          alert('Nomor PR berhasil diperbarui ke cloud!');
+        } else {
+          const picVal = document.getElementById('modal-input-pic').value.trim();
+          const realPriceVal = document.getElementById('modal-input-realprice').value;
+          await updateDoc(docRef, {
+            assignedTo: picVal,
+            realPrice: realPriceVal ? Number(realPriceVal) : null
+          });
+          alert('PIC & Real Price berhasil diperbarui ke cloud!');
+        }
+      } catch (err) {
+        alert("Gagal update data: " + err.message);
       }
+    };
 
-      renderProcurementBoard();
-      renderUserDashboard();
-    }
-
-    // CHAT SYSTEM
     function renderTicketComments(req) {
       const chatBox = document.getElementById('chat-messages-box');
       chatBox.innerHTML = '';
@@ -1027,7 +983,7 @@
       lucide.createIcons();
     }
 
-    function handleFileSelected(e) {
+    window.handleFileSelected = function(e) {
       const file = e.target.files[0];
       if (!file) return;
 
@@ -1041,15 +997,16 @@
         document.getElementById('chat-file-preview-name').textContent = `File siap kirim: ${file.name}`;
       };
       reader.readAsDataURL(file);
-    }
+    };
 
-    function clearAttachedFile() {
+    window.clearAttachedFile = function() {
       currentAttachedFile = null;
       document.getElementById('chat-file-input').value = '';
       document.getElementById('chat-file-preview').classList.add('hidden');
-    }
+    };
 
-    function handleSendComment(e) {
+    // KIRIM CHAT REALTIME KE FIRESTORE
+    window.handleSendComment = async function(e) {
       e.preventDefault();
       const input = document.getElementById('chat-text-input');
       const text = input.value.trim();
@@ -1059,12 +1016,11 @@
       const req = requests.find(r => r.id === currentActiveTicketId);
       if (!req) return;
 
-      if (!req.comments) req.comments = [];
-
+      const updatedComments = req.comments ? [...req.comments] : [];
       const now = new Date();
       const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
 
-      req.comments.push({
+      updatedComments.push({
         sender: currentUser.username,
         senderName: currentUser.name,
         text: text || (currentAttachedFile ? `Mengirimkan lampiran: ${currentAttachedFile.name}` : ''),
@@ -1072,16 +1028,17 @@
         file: currentAttachedFile
       });
 
-      saveData();
-      input.value = '';
-      clearAttachedFile();
-      renderTicketComments(req);
-      renderProcurementBoard();
-      renderUserDashboard();
-    }
+      try {
+        const docRef = doc(db, "procurement_requests", currentActiveTicketId);
+        await updateDoc(docRef, { comments: updatedComments });
+        input.value = '';
+        clearAttachedFile();
+      } catch (err) {
+        alert("Gagal kirim pesan: " + err.message);
+      }
+    };
 
-    // MODAL FORM TAMBAH DATA (USER)
-    function toggleModal(show) {
+    window.toggleModal = function(show) {
       const modal = document.getElementById('modal-request');
       if (show) {
         modal.classList.remove('hidden');
@@ -1093,9 +1050,10 @@
         document.getElementById('request-form').reset();
       }
       lucide.createIcons();
-    }
+    };
 
-    function handleCreateRequest(e) {
+    // SIMPAN PENGAJUAN BARU KE FIRESTORE CLOUD
+    window.handleCreateRequest = function(e) {
       e.preventDefault();
       const creatorName = document.getElementById('req-creator-name').value.trim();
       const item = document.getElementById('req-item').value;
@@ -1109,12 +1067,12 @@
       const newId = 'REQ-' + Math.floor(1000 + Math.random() * 9000);
       const today = new Date().toISOString().split('T')[0];
 
-      const saveNewData = (photoBase64 = '') => {
+      const saveToFirestore = async (photoBase64 = '') => {
         const newReq = {
           id: newId,
           createdBy: currentUser.username,
           creatorName: creatorName || currentUser.name,
-          assignedTo: '', // Kosong saat awal diajukan, menunggu di-assign oleh procurement
+          assignedTo: '',
           item,
           brand,
           type,
@@ -1125,39 +1083,44 @@
           photo: photoBase64,
           status: 'submitted',
           date: today,
+          createdAt: Date.now(),
           comments: []
         };
-        requests.unshift(newReq);
-        saveData();
-        toggleModal(false);
-        renderApp();
+
+        try {
+          // Set dokumen menggunakan custom ID (newId)
+          await setDoc(doc(db, "procurement_requests", newId), newReq);
+          toggleModal(false);
+        } catch (err) {
+          alert("Gagal menyimpan ke cloud: " + err.message);
+        }
       };
 
       if (photoFile) {
         const reader = new FileReader();
-        reader.onloadend = () => saveNewData(reader.result);
+        reader.onloadend = () => saveToFirestore(reader.result);
         reader.readAsDataURL(photoFile);
       } else {
-        saveNewData();
+        saveToFirestore();
       }
-    }
+    };
 
-    // DRAG AND DROP KANBAN
-    function handleDragStart(e, id) {
+    // DRAG AND DROP KANBAN REALTIME KE CLOUD
+    window.handleDragStart = function(e, id) {
       e.dataTransfer.setData('text/plain', id);
       e.dataTransfer.effectAllowed = 'move';
-    }
+    };
 
-    function handleDragOver(e) {
+    window.handleDragOver = function(e) {
       e.preventDefault();
       e.currentTarget.classList.add('drag-hover');
-    }
+    };
 
-    function handleDragLeave(e) {
+    window.handleDragLeave = function(e) {
       e.currentTarget.classList.remove('drag-hover');
-    }
+    };
 
-    function handleDrop(e) {
+    window.handleDrop = async function(e) {
       e.preventDefault();
       e.currentTarget.classList.remove('drag-hover');
       const reqId = e.dataTransfer.getData('text/plain');
@@ -1165,16 +1128,23 @@
 
       const item = requests.find(r => r.id === reqId);
       if (item && item.status !== targetStatus) {
-        item.status = targetStatus;
-        saveData();
-        renderProcurementBoard();
-        renderUserDashboard();
+        try {
+          const docRef = doc(db, "procurement_requests", reqId);
+          await updateDoc(docRef, { status: targetStatus });
+        } catch (err) {
+          console.error("Gagal update status: ", err);
+        }
       }
-    }
+    };
 
+    // Startup Execution
     window.onload = () => {
-      initData();
+      const savedUser = sessionStorage.getItem('procureflow_user');
+      if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+      }
       renderApp();
+      listenToRealtimeData();
     };
   </script>
 </body>
