@@ -173,9 +173,10 @@
             <thead class="bg-slate-50/70 border-b border-slate-100 text-slate-500 font-semibold text-[11px] uppercase tracking-wider">
               <tr>
                 <th class="px-6 py-3.5">Detail Barang</th>
+                <th class="px-6 py-3.5">Pemohon</th>
                 <th class="px-6 py-3.5">No. PR (User)</th>
                 <th class="px-6 py-3.5">Real Price (Procurement)</th>
-                <th class="px-6 py-3.5">Est. Budget User</th>
+                <th class="px-6 py-3.5">Est. Budget</th>
                 <th class="px-6 py-3.5">Foto</th>
                 <th class="px-6 py-3.5">Status</th>
                 <th class="px-6 py-3.5 text-center">Aksi / Diskusi</th>
@@ -202,14 +203,14 @@
             <h2 class="text-2xl font-extrabold tracking-tight text-slate-900">Procurement Board</h2>
             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">Live Workspace</span>
           </div>
-          <p class="text-xs text-slate-500 mt-0.5">Pantau No. PR dari user, tentukan estimasi real price, dan diskusikan progres pengadaan.</p>
+          <p class="text-xs text-slate-500 mt-0.5">Pantau nama pemohon & No. PR, tentukan estimasi real price, dan diskusikan progres pengadaan.</p>
         </div>
 
         <!-- Search Bar Procurement -->
         <div class="flex items-center gap-3 w-full sm:w-auto">
           <div class="relative flex-1 sm:w-80">
             <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-2.5"></i>
-            <input type="text" id="procure-search-input" oninput="handleProcureSearch(event)" placeholder="Search item, requester, No PR..." class="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600 shadow-sm" />
+            <input type="text" id="procure-search-input" oninput="handleProcureSearch(event)" placeholder="Search item, nama pemohon, No PR..." class="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600 shadow-sm" />
           </div>
         </div>
       </div>
@@ -291,7 +292,7 @@
       <div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-gradient-to-r from-emerald-900 to-emerald-800 text-white">
         <div>
           <h3 class="font-bold text-base">Buat Pengajuan Pengadaan</h3>
-          <p class="text-[11px] text-emerald-200">Isi spesifikasi & nomor PR untuk diproses tim pengadaan</p>
+          <p class="text-[11px] text-emerald-200">Isi identitas pemohon, spesifikasi & nomor PR</p>
         </div>
         <button onclick="toggleModal(false)" class="text-emerald-200 hover:text-white p-1 rounded-lg">
           <i data-lucide="x" class="w-5 h-5"></i>
@@ -299,6 +300,15 @@
       </div>
 
       <form id="request-form" onsubmit="handleCreateRequest(event)" class="p-6 overflow-y-auto space-y-4 text-xs">
+        <!-- FIELD NAMA PEMOHON -->
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Nama Pemohon / Requester <span class="text-rose-500">*</span></label>
+          <div class="relative">
+            <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
+            <input type="text" id="req-creator-name" required placeholder="Nama lengkap staf / pemohon" class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600 outline-none transition" />
+          </div>
+        </div>
+
         <div>
           <label class="block font-bold text-slate-700 mb-1">Nama Item / Barang <span class="text-rose-500">*</span></label>
           <input type="text" id="req-item" required placeholder="Misal: Monitor Ergonomis 27 Inch" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600 outline-none transition" />
@@ -315,7 +325,6 @@
           </div>
         </div>
 
-        <!-- Input Nomor PR di Sisi User (Opsional saat buat baru) -->
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block font-bold text-slate-700 mb-1">Nomor PR (User)</label>
@@ -386,7 +395,6 @@
             </div>
           </div>
 
-          <!-- INPUT FORM: HAK AKSES DIPISAHKAN SECARA TEGAS -->
           <div class="mt-4 p-3.5 bg-emerald-50/50 border border-emerald-200/70 rounded-2xl">
             <h4 class="text-xs font-bold text-emerald-950 flex items-center gap-1.5 mb-2.5">
               <i data-lucide="file-badge" class="w-4 h-4 text-emerald-700"></i>
@@ -394,7 +402,6 @@
             </h4>
             
             <div class="space-y-3 text-xs">
-              <!-- Nomor PR: Dikelola oleh User -->
               <div>
                 <div class="flex justify-between items-center mb-1">
                   <label class="text-[11px] font-bold text-slate-700">Nomor PR (Purchase Requisition)</label>
@@ -403,7 +410,6 @@
                 <input type="text" id="modal-input-pr" placeholder="Contoh: PR-2026-X891" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-mono font-bold focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600 outline-none transition disabled:bg-slate-100 disabled:text-slate-500 disabled:cursor-not-allowed" />
               </div>
 
-              <!-- Real Price: Dikelola oleh Procurement -->
               <div>
                 <div class="flex justify-between items-center mb-1">
                   <label class="text-[11px] font-bold text-slate-700">Real Price / Vendor Quote (IDR)</label>
@@ -504,7 +510,7 @@
           {
             id: 'REQ-101',
             createdBy: 'user1',
-            creatorName: 'Alif Pratama',
+            creatorName: 'Alif Pratama (Div. Tech)',
             item: 'Dell UltraSharp 27" 4K',
             brand: 'Dell',
             type: 'U2723QE',
@@ -523,7 +529,7 @@
           {
             id: 'REQ-102',
             createdBy: 'user1',
-            creatorName: 'Alif Pratama',
+            creatorName: 'Alif Pratama (Div. Tech)',
             item: 'Keychron Q1 Pro',
             brand: 'Keychron',
             type: 'Wireless Custom Mechanical',
@@ -539,7 +545,7 @@
           {
             id: 'REQ-1652',
             createdBy: 'user1',
-            creatorName: 'Alif Pratama',
+            creatorName: 'Alif Pratama (Div. Tech)',
             item: 'Handphone',
             brand: 'Iphone 17',
             type: 'Pro Max',
@@ -555,7 +561,7 @@
           {
             id: 'REQ-103',
             createdBy: 'user2',
-            creatorName: 'Dina Lestari',
+            creatorName: 'Dina Lestari (Div. Operasional)',
             item: 'MacBook Air M2 16GB',
             brand: 'Apple',
             type: 'Midnight 512GB SSD',
@@ -679,6 +685,7 @@
           r.item.toLowerCase().includes(userSearchTerm) ||
           r.brand.toLowerCase().includes(userSearchTerm) ||
           r.id.toLowerCase().includes(userSearchTerm) ||
+          (r.creatorName && r.creatorName.toLowerCase().includes(userSearchTerm)) ||
           (r.prNumber && r.prNumber.toLowerCase().includes(userSearchTerm))
         );
       }
@@ -711,6 +718,10 @@
               <span>•</span>
               <span class="font-semibold text-slate-600">${req.brand} (${req.type})</span>
             </div>
+          </td>
+          <td class="px-6 py-4">
+            <div class="text-xs font-bold text-slate-800">${req.creatorName}</div>
+            <div class="text-[10px] text-slate-400">@${req.createdBy}</div>
           </td>
           <td class="px-6 py-4">
             <span class="text-xs font-mono font-bold px-2 py-1 bg-slate-100 rounded text-slate-800">${req.prNumber || '<span class="text-rose-500 font-medium">Belum Diisi</span>'}</span>
@@ -756,6 +767,7 @@
           r.item.toLowerCase().includes(procureSearchTerm) ||
           r.brand.toLowerCase().includes(procureSearchTerm) ||
           r.id.toLowerCase().includes(procureSearchTerm) ||
+          (r.creatorName && r.creatorName.toLowerCase().includes(procureSearchTerm)) ||
           r.createdBy.toLowerCase().includes(procureSearchTerm) ||
           (r.prNumber && r.prNumber.toLowerCase().includes(procureSearchTerm))
         );
@@ -809,9 +821,9 @@
               <i data-lucide="message-square" class="w-3.5 h-3.5 text-slate-400"></i>
               <span>${commentsCount}</span>
             </div>
-            <div class="flex items-center gap-1 text-slate-600 font-medium">
-              <i data-lucide="user" class="w-3 h-3 text-slate-400"></i>
-              <span>${req.createdBy}</span>
+            <div class="flex items-center gap-1 text-slate-600 font-semibold truncate max-w-[140px]" title="${req.creatorName}">
+              <i data-lucide="user" class="w-3 h-3 text-slate-400 shrink-0"></i>
+              <span class="truncate">${req.creatorName}</span>
             </div>
           </div>
         `;
@@ -863,9 +875,6 @@
       prInput.value = req.prNumber || '';
       realPriceInput.value = req.realPrice || '';
 
-      // ATURAN HAK AKSES:
-      // USER: BISA EDIT PR, TIDAK BISA REAL PRICE
-      // PROCUREMENT: TIDAK BISA EDIT PR, BISA EDIT REAL PRICE
       if (currentUser.role === 'user') {
         prInput.removeAttribute('disabled');
         prHint.className = 'text-[9px] px-1.5 py-0.5 rounded font-bold bg-emerald-100 text-emerald-800';
@@ -904,20 +913,17 @@
       lucide.createIcons();
     }
 
-    // SIMPAN DATA SESUAI PERAN (USER / PROCUREMENT)
     function handleSaveTicketData() {
       if (!currentActiveTicketId) return;
       const req = requests.find(r => r.id === currentActiveTicketId);
       if (!req) return;
 
       if (currentUser.role === 'user') {
-        // User menyimpan Nomor PR
         const prVal = document.getElementById('modal-input-pr').value.trim();
         req.prNumber = prVal;
         saveData();
         alert('Nomor PR berhasil diperbarui oleh User!');
       } else {
-        // Procurement menyimpan Real Price
         const realPriceVal = document.getElementById('modal-input-realprice').value;
         req.realPrice = realPriceVal ? Number(realPriceVal) : null;
         saveData();
@@ -928,7 +934,6 @@
       renderUserDashboard();
     }
 
-    // CHAT SYSTEM
     function renderTicketComments(req) {
       const chatBox = document.getElementById('chat-messages-box');
       chatBox.innerHTML = '';
@@ -1033,6 +1038,10 @@
       const modal = document.getElementById('modal-request');
       if (show) {
         modal.classList.remove('hidden');
+        // Isi default nama pemohon sesuai user aktif
+        if (currentUser) {
+          document.getElementById('req-creator-name').value = currentUser.name;
+        }
       } else {
         modal.classList.add('hidden');
         document.getElementById('request-form').reset();
@@ -1042,11 +1051,12 @@
 
     function handleCreateRequest(e) {
       e.preventDefault();
+      const creatorName = document.getElementById('req-creator-name').value.trim();
       const item = document.getElementById('req-item').value;
       const brand = document.getElementById('req-brand').value;
       const type = document.getElementById('req-type').value;
       const budget = document.getElementById('req-budget').value;
-      const prNumber = document.getElementById('req-pr').value.trim(); // Diisi oleh user
+      const prNumber = document.getElementById('req-pr').value.trim();
       const desc = document.getElementById('req-desc').value;
       const photoFile = document.getElementById('req-photo').files[0];
 
@@ -1057,12 +1067,12 @@
         const newReq = {
           id: newId,
           createdBy: currentUser.username,
-          creatorName: currentUser.name,
+          creatorName: creatorName || currentUser.name,
           item,
           brand,
           type,
           budget: Number(budget),
-          realPrice: null, // Procurement yang akan mengisi
+          realPrice: null,
           prNumber: prNumber || '',
           desc,
           photo: photoBase64,
