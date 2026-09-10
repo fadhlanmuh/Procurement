@@ -43,31 +43,16 @@
   </script>
 
   <style>
-    body {
-      background-color: #f8faf9;
-    }
-    .kanban-column {
-      min-height: 520px;
-    }
+    body { background-color: #f8faf9; }
+    .kanban-column { min-height: 520px; }
     .drag-hover {
       background-color: #ecfdf5 !important;
       border: 2px dashed #059669 !important;
     }
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 9999px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #94a3b8;
-    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
   </style>
 </head>
 <body class="text-slate-800 font-sans min-h-screen flex flex-col selection:bg-emerald-100 selection:text-emerald-900">
@@ -80,7 +65,6 @@
       </div>
       <div>
         <div class="flex items-center gap-2">
-          <!-- Diubah menjadi Procurement & sub-judul dihilangkan -->
           <span class="font-extrabold tracking-tight text-slate-900 text-base">Procurement</span>
           <span id="role-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wide border"></span>
         </div>
@@ -101,7 +85,6 @@
 
   <!-- ================= MAIN CONTENT ================= -->
   <main class="flex-1 flex flex-col relative overflow-hidden">
-
     <div class="absolute top-0 right-1/4 -z-10 w-96 h-96 bg-emerald-100/40 rounded-full blur-3xl pointer-events-none"></div>
     <div class="absolute bottom-10 left-10 -z-10 w-80 h-80 bg-teal-100/30 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -177,10 +160,12 @@
         </div>
       </div>
 
-      <!-- Table Section -->
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
         <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-          <h3 class="font-bold text-sm text-slate-800">Riwayat Pengajuan</h3>
+          <div>
+            <h3 class="font-bold text-sm text-slate-800">Riwayat Pengajuan</h3>
+            <p class="text-[11px] text-slate-400">Klik baris tiket untuk membuka detail, melihat estimasi harga, atau berdiskusi.</p>
+          </div>
           <span id="user-req-count" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">0 Item</span>
         </div>
 
@@ -190,15 +175,15 @@
               <tr>
                 <th class="px-6 py-3.5">Detail Barang</th>
                 <th class="px-6 py-3.5">Model / Tipe</th>
-                <th class="px-6 py-3.5">Estimasi Budget</th>
+                <th class="px-6 py-3.5">Estimasi Budget (User)</th>
+                <th class="px-6 py-3.5">Harga Pengadaan (Proc.)</th>
                 <th class="px-6 py-3.5">Foto</th>
                 <th class="px-6 py-3.5">Tanggal</th>
                 <th class="px-6 py-3.5">Status Pengadaan</th>
+                <th class="px-6 py-3.5 text-center">Diskusi</th>
               </tr>
             </thead>
-            <tbody id="user-requests-table" class="divide-y divide-slate-100">
-              <!-- Render via JS -->
-            </tbody>
+            <tbody id="user-requests-table" class="divide-y divide-slate-100"></tbody>
           </table>
         </div>
 
@@ -212,30 +197,39 @@
       </div>
     </section>
 
-    <!-- 3. PROCUREMENT VIEW (KANBAN BOARD 6 KOLOM) -->
+    <!-- 3. PROCUREMENT VIEW (KANBAN BOARD DENGAN SEARCH BAR) -->
     <section id="procurement-view" class="hidden p-6 w-full flex-1 flex flex-col max-w-full mx-auto">
-      <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6">
+      <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
         <div>
           <div class="flex items-center gap-2">
-            <!-- Diubah menjadi Procurement Board -->
             <h2 class="text-2xl font-extrabold tracking-tight text-slate-900">Procurement Board</h2>
             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">Live Workspace</span>
           </div>
-          <p class="text-xs text-slate-500 mt-1">Geser kartu antarkolom untuk memperbarui status pengadaan secara langsung.</p>
+          <p class="text-xs text-slate-500 mt-1">Geser kartu antarkolom untuk mengubah status. Klik kartu untuk chat & update harga.</p>
         </div>
 
-        <div class="flex items-center gap-3">
-          <div class="text-xs text-slate-600 bg-white border border-slate-200/80 px-3.5 py-2 rounded-xl flex items-center gap-2 shadow-sm font-medium">
+        <!-- KOLOM PENCARIAN BARANG (ITEM SEARCH) -->
+        <div class="flex items-center gap-3 w-full md:w-auto">
+          <div class="relative flex-1 md:w-80">
+            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+            <input 
+              type="text" 
+              id="procurement-search" 
+              oninput="handleSearch(this.value)" 
+              placeholder="Cari item, brand, requester, atau ID tiket..." 
+              class="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600 outline-none shadow-sm transition"
+            />
+          </div>
+          <div class="text-xs text-slate-600 bg-white border border-slate-200/80 px-3.5 py-2.5 rounded-xl flex items-center gap-2 shadow-sm font-medium shrink-0">
             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            Drag & Drop Enabled
+            Drag & Drop
           </div>
         </div>
       </div>
 
-      <!-- KANBAN BOARD 6 KOLOM (SUBMITTED, SOURCING, REVIEW, HOLD, PO, COMPLETED) -->
+      <!-- KANBAN BOARD 6 KOLOM -->
       <div class="flex gap-4 overflow-x-auto pb-4 flex-1 items-start">
-        
-        <!-- KOLOM 1: SUBMITTED -->
+        <!-- SUBMITTED -->
         <div class="bg-slate-100/80 border border-slate-200/70 p-4 rounded-2xl flex flex-col w-80 shrink-0">
           <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-200/70">
             <div class="flex items-center gap-2">
@@ -247,7 +241,7 @@
           <div id="col-submitted" data-status="submitted" class="kanban-column space-y-3 flex-1 overflow-y-auto p-0.5" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)"></div>
         </div>
 
-        <!-- KOLOM 2: SOURCING -->
+        <!-- SOURCING -->
         <div class="bg-amber-50/50 border border-amber-200/60 p-4 rounded-2xl flex flex-col w-80 shrink-0">
           <div class="flex items-center justify-between pb-3 mb-3 border-b border-amber-200/60">
             <div class="flex items-center gap-2">
@@ -259,7 +253,7 @@
           <div id="col-sourcing" data-status="sourcing" class="kanban-column space-y-3 flex-1 overflow-y-auto p-0.5" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)"></div>
         </div>
 
-        <!-- KOLOM 3: REVIEW -->
+        <!-- REVIEW -->
         <div class="bg-indigo-50/50 border border-indigo-200/60 p-4 rounded-2xl flex flex-col w-80 shrink-0">
           <div class="flex items-center justify-between pb-3 mb-3 border-b border-indigo-200/60">
             <div class="flex items-center gap-2">
@@ -271,7 +265,7 @@
           <div id="col-review" data-status="review" class="kanban-column space-y-3 flex-1 overflow-y-auto p-0.5" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)"></div>
         </div>
 
-        <!-- KOLOM 4: HOLD -->
+        <!-- HOLD -->
         <div class="bg-rose-50/50 border border-rose-200/60 p-4 rounded-2xl flex flex-col w-80 shrink-0">
           <div class="flex items-center justify-between pb-3 mb-3 border-b border-rose-200/60">
             <div class="flex items-center gap-2">
@@ -283,7 +277,7 @@
           <div id="col-hold" data-status="hold" class="kanban-column space-y-3 flex-1 overflow-y-auto p-0.5" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)"></div>
         </div>
 
-        <!-- KOLOM 5: PO -->
+        <!-- PO -->
         <div class="bg-emerald-50/50 border border-emerald-200/60 p-4 rounded-2xl flex flex-col w-80 shrink-0">
           <div class="flex items-center justify-between pb-3 mb-3 border-b border-emerald-200/60">
             <div class="flex items-center gap-2">
@@ -295,7 +289,7 @@
           <div id="col-po" data-status="po" class="kanban-column space-y-3 flex-1 overflow-y-auto p-0.5" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)"></div>
         </div>
 
-        <!-- KOLOM 6: COMPLETED -->
+        <!-- COMPLETED -->
         <div class="bg-teal-50/50 border border-teal-200/60 p-4 rounded-2xl flex flex-col w-80 shrink-0">
           <div class="flex items-center justify-between pb-3 mb-3 border-b border-teal-200/60">
             <div class="flex items-center gap-2">
@@ -306,10 +300,116 @@
           </div>
           <div id="col-completed" data-status="completed" class="kanban-column space-y-3 flex-1 overflow-y-auto p-0.5" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)"></div>
         </div>
-
       </div>
     </section>
   </main>
+
+  <!-- ================= MODAL DETAIL TIKET & KOMUNIKASI (CHAT + PRICE + FILE) ================= -->
+  <div id="modal-ticket-detail" class="hidden fixed inset-0 z-50 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-3xl overflow-hidden border border-slate-100 flex flex-col max-h-[92vh]">
+      <!-- Header -->
+      <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+        <div class="flex items-center gap-2.5">
+          <span id="detail-ticket-id" class="text-xs font-mono font-bold text-emerald-900 bg-emerald-100/80 px-2.5 py-0.5 rounded-md"></span>
+          <span id="detail-ticket-status" class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full border"></span>
+        </div>
+        <button onclick="closeTicketDetailModal()" class="text-slate-400 hover:text-slate-700 p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Body Tabs (Info & Chat) -->
+      <div class="flex-1 overflow-y-auto p-6 space-y-6">
+        
+        <!-- Info Barang -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pb-5 border-b border-slate-100">
+          <div class="sm:col-span-2 space-y-1">
+            <h3 id="detail-ticket-item" class="text-lg font-bold text-slate-900"></h3>
+            <p id="detail-ticket-brand-type" class="text-xs text-slate-500 font-medium"></p>
+            <p id="detail-ticket-desc" class="text-xs text-slate-600 mt-2 bg-slate-50 p-3 rounded-xl border border-slate-100 leading-relaxed"></p>
+            <div class="text-[11px] text-slate-400 mt-2 flex items-center gap-2">
+              <span>Diajukan oleh: <strong id="detail-ticket-creator" class="text-slate-700"></strong></span>
+              <span>•</span>
+              <span id="detail-ticket-date"></span>
+            </div>
+          </div>
+          <div id="detail-ticket-photo-container" class="flex flex-col items-center justify-center bg-slate-50 rounded-2xl border border-slate-200/70 p-2 h-40 overflow-hidden">
+            <!-- Render foto tiket -->
+          </div>
+        </div>
+
+        <!-- PRICING MANAGEMENT (BUDGET vs ESTIMATED/ACTUAL PRICE) -->
+        <div class="bg-emerald-50/50 border border-emerald-200/80 rounded-2xl p-4 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+          <div>
+            <span class="text-[11px] font-semibold text-slate-500 block uppercase">Anggaran Pemohon (Budget User)</span>
+            <span id="detail-ticket-budget" class="text-sm font-bold text-slate-800"></span>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div>
+              <span class="text-[11px] font-bold text-emerald-900 block uppercase">Estimasi / Harga Realisasi (Procurement)</span>
+              <div class="flex items-center gap-2 mt-1">
+                <div class="relative">
+                  <span class="absolute left-3 top-2 text-xs font-bold text-slate-400">Rp</span>
+                  <input 
+                    type="number" 
+                    id="input-ticket-realized-price" 
+                    placeholder="Masukkan harga deal..." 
+                    class="pl-9 pr-3 py-1.5 bg-white border border-slate-300 rounded-xl text-xs font-bold text-emerald-950 focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600 outline-none w-44"
+                  />
+                </div>
+                <button id="btn-save-price" onclick="saveTicketPrice()" class="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-semibold shadow-sm transition">Simpan</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- KOMUNIKASI & LAMPIRAN FILE (CHAT BOX) -->
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h4 class="font-bold text-xs uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+              <i data-lucide="messages-square" class="w-4 h-4 text-emerald-600"></i>
+              Diskusi & Lampiran Berkas Tiket
+            </h4>
+            <span class="text-[11px] text-slate-400 font-medium">Real-time internal chat</span>
+          </div>
+
+          <!-- Chat messages area -->
+          <div id="chat-messages-box" class="bg-slate-50 border border-slate-200/70 rounded-2xl p-4 h-64 overflow-y-auto space-y-3 text-xs">
+            <!-- Messages rendered via JS -->
+          </div>
+
+          <!-- Chat Form -->
+          <form id="chat-form" onsubmit="handleSendComment(event)" class="mt-3 space-y-2">
+            <div class="flex items-center gap-2">
+              <input 
+                type="text" 
+                id="chat-input-text" 
+                required 
+                placeholder="Tulis pesan atau klarifikasi barang ke tim/requester..." 
+                class="flex-1 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600 outline-none"
+              />
+              <button type="submit" class="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition shrink-0 shadow-sm">
+                <span>Kirim</span>
+                <i data-lucide="send" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+
+            <!-- Upload File Attachments -->
+            <div class="flex items-center gap-2">
+              <label class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-[11px] font-semibold text-slate-600 hover:bg-slate-100 transition">
+                <i data-lucide="paperclip" class="w-3.5 h-3.5 text-emerald-700"></i>
+                <span id="file-selected-name">Lampirkan File / Dokumen (PDF, Gambar, Excel)</span>
+                <input type="file" id="chat-file-input" onchange="handleFileSelected(this)" class="hidden" />
+              </label>
+              <button type="button" id="btn-cancel-file" onclick="clearSelectedFile()" class="hidden text-rose-500 text-[11px] font-semibold hover:underline">Hapus file</button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
 
   <!-- ================= MODAL PENGAJUAN BARU ================= -->
   <div id="modal-request" class="hidden fixed inset-0 z-50 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center p-4">
@@ -370,60 +470,35 @@
 
   <!-- ================= JAVASCRIPT LOGIC ================= -->
   <script>
-    // HARDCODED USERS
     const USERS = [
       { username: 'user1', password: 'user123', role: 'user', name: 'Alif Pratama (Div. Tech)' },
       { username: 'user2', password: 'user123', role: 'user', name: 'Dina Lestari (Div. Operasional)' },
       { username: 'procure', password: 'admin123', role: 'procurement', name: 'Bayu Wicaksono (Procurement Officer)' }
     ];
 
-    // Status Mapping untuk 6 Tahapan Baru
     const STATUS_MAP = {
-      submitted: {
-        label: 'SUBMITTED',
-        badge: 'bg-slate-100 text-slate-700 border-slate-200',
-        dot: 'bg-slate-400'
-      },
-      sourcing: {
-        label: 'SOURCING',
-        badge: 'bg-amber-100/80 text-amber-800 border-amber-200',
-        dot: 'bg-amber-500'
-      },
-      review: {
-        label: 'REVIEW',
-        badge: 'bg-indigo-100 text-indigo-800 border-indigo-200',
-        dot: 'bg-indigo-600'
-      },
-      hold: {
-        label: 'HOLD',
-        badge: 'bg-rose-100 text-rose-800 border-rose-200',
-        dot: 'bg-rose-600'
-      },
-      po: {
-        label: 'PO',
-        badge: 'bg-emerald-100 text-emerald-800 border-emerald-200',
-        dot: 'bg-emerald-600'
-      },
-      completed: {
-        label: 'COMPLETED',
-        badge: 'bg-teal-100 text-teal-800 border-teal-200',
-        dot: 'bg-teal-600'
-      }
+      submitted: { label: 'SUBMITTED', badge: 'bg-slate-100 text-slate-700 border-slate-200', dot: 'bg-slate-400' },
+      sourcing: { label: 'SOURCING', badge: 'bg-amber-100/80 text-amber-800 border-amber-200', dot: 'bg-amber-500' },
+      review: { label: 'REVIEW', badge: 'bg-indigo-100 text-indigo-800 border-indigo-200', dot: 'bg-indigo-600' },
+      hold: { label: 'HOLD', badge: 'bg-rose-100 text-rose-800 border-rose-200', dot: 'bg-rose-600' },
+      po: { label: 'PO', badge: 'bg-emerald-100 text-emerald-800 border-emerald-200', dot: 'bg-emerald-600' },
+      completed: { label: 'COMPLETED', badge: 'bg-teal-100 text-teal-800 border-teal-200', dot: 'bg-teal-600' }
     };
 
     let currentUser = null;
     let requests = [];
+    let currentSearchTerm = '';
+    let activeTicketId = null;
+    let pendingFileAttachment = null;
 
     function initData() {
       const stored = localStorage.getItem('procureflow_requests');
       if (stored) {
-        // Normalisasi status lama jika ada yang masih tersimpan di browser
-        const temp = JSON.parse(stored);
-        requests = temp.map(r => {
-          if (r.status === 'requested') r.status = 'submitted';
-          if (r.status === 'purchasing') r.status = 'po';
-          if (r.status === 'done') r.status = 'completed';
-          return r;
+        requests = JSON.parse(stored);
+        // Pastikan format array comments dan estimatedPrice tersedia
+        requests.forEach(r => {
+          if (!r.comments) r.comments = [];
+          if (r.estimatedPrice === undefined) r.estimatedPrice = null;
         });
         saveData();
       } else {
@@ -436,10 +511,21 @@
             brand: 'Dell',
             type: 'U2723QE',
             budget: 8500000,
+            estimatedPrice: 8350000,
             desc: 'Monitor tambahan untuk kebutuhan UI/UX & design dev',
             photo: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&q=80',
             status: 'submitted',
-            date: '2026-09-08'
+            date: '2026-09-08',
+            comments: [
+              {
+                sender: 'user1',
+                senderName: 'Alif Pratama',
+                role: 'user',
+                text: 'Mohon dibantu percepat approval karena monitor lama flicker parah.',
+                time: '08 Sep 2026 10:15',
+                attachment: null
+              }
+            ]
           },
           {
             id: 'REQ-102',
@@ -449,10 +535,12 @@
             brand: 'Keychron',
             type: 'Wireless Custom Mechanical',
             budget: 2800000,
+            estimatedPrice: 2750000,
             desc: 'Keyboard wireless ergonomic',
             photo: '',
             status: 'sourcing',
-            date: '2026-09-09'
+            date: '2026-09-09',
+            comments: []
           },
           {
             id: 'REQ-1652',
@@ -462,10 +550,21 @@
             brand: 'Iphone 17',
             type: 'Pro Max',
             budget: 30000000,
+            estimatedPrice: 28500000,
             desc: 'Kebutuhan tim testing kamera & apps',
             photo: '',
             status: 'po',
-            date: '2026-09-10'
+            date: '2026-09-10',
+            comments: [
+              {
+                sender: 'procure',
+                senderName: 'Bayu (Procurement)',
+                role: 'procurement',
+                text: 'PO sudah diterbitkan ke distributor resmi iBox.',
+                time: '10 Sep 2026 14:00',
+                attachment: null
+              }
+            ]
           },
           {
             id: 'REQ-103',
@@ -475,10 +574,12 @@
             brand: 'Apple',
             type: 'Midnight 512GB SSD',
             budget: 18500000,
+            estimatedPrice: 18200000,
             desc: 'Pergantian laptop lama yang sudah rusak baterai',
             photo: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&q=80',
             status: 'completed',
-            date: '2026-09-07'
+            date: '2026-09-07',
+            comments: []
           }
         ];
         saveData();
@@ -496,6 +597,7 @@
     }
 
     function formatIDR(val) {
+      if (!val || val === 0) return 'Belum diisi';
       return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);
     }
 
@@ -524,6 +626,7 @@
       currentUser = null;
       document.getElementById('login-username').value = '';
       document.getElementById('login-password').value = '';
+      closeTicketDetailModal();
       renderApp();
     }
 
@@ -565,6 +668,13 @@
       lucide.createIcons();
     }
 
+    // ================= FITUR SEARCH BAR (PROCUREMENT) =================
+    function handleSearch(query) {
+      currentSearchTerm = query.toLowerCase().trim();
+      renderProcurementBoard();
+    }
+
+    // ================= USER DASHBOARD =================
     function renderUserDashboard() {
       const tableBody = document.getElementById('user-requests-table');
       const emptyState = document.getElementById('user-empty-state');
@@ -583,13 +693,15 @@
 
       myRequests.forEach(req => {
         const tr = document.createElement('tr');
-        tr.className = 'hover:bg-slate-50/80 transition duration-150 border-b border-slate-100';
+        tr.className = 'hover:bg-slate-50/80 transition duration-150 border-b border-slate-100 cursor-pointer';
+        tr.onclick = () => openTicketDetailModal(req.id);
 
         const photoHtml = req.photo
           ? `<img src="${req.photo}" class="w-11 h-11 object-cover rounded-xl border border-slate-200 shadow-sm" alt="Foto Item"/>`
           : `<div class="w-11 h-11 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 text-[10px] font-semibold">No Pict</div>`;
 
         const statConfig = STATUS_MAP[req.status] || STATUS_MAP['submitted'];
+        const commentsCount = req.comments ? req.comments.length : 0;
 
         tr.innerHTML = `
           <td class="px-6 py-4">
@@ -604,8 +716,11 @@
             <div class="text-xs font-medium text-slate-800">${req.type}</div>
             <div class="text-[11px] text-slate-400 truncate max-w-xs mt-0.5">${req.desc || '-'}</div>
           </td>
-          <td class="px-6 py-4 font-bold text-slate-900 text-xs">
+          <td class="px-6 py-4 font-semibold text-slate-800 text-xs">
             ${formatIDR(req.budget)}
+          </td>
+          <td class="px-6 py-4 font-bold text-emerald-700 text-xs">
+            ${formatIDR(req.estimatedPrice)}
           </td>
           <td class="px-6 py-4">
             ${photoHtml}
@@ -619,13 +734,20 @@
               ${statConfig.label}
             </span>
           </td>
+          <td class="px-6 py-4 text-center">
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold">
+              <i data-lucide="message-square" class="w-3.5 h-3.5 text-emerald-700"></i>
+              ${commentsCount}
+            </span>
+          </td>
         `;
         tableBody.appendChild(tr);
       });
+      lucide.createIcons();
     }
 
+    // ================= PROCUREMENT KANBAN BOARD =================
     function renderProcurementBoard() {
-      // 6 Kolom Kanban
       const columns = ['submitted', 'sourcing', 'review', 'hold', 'po', 'completed'];
       const counts = { submitted: 0, sourcing: 0, review: 0, hold: 0, po: 0, completed: 0 };
 
@@ -634,7 +756,18 @@
         if (colContainer) colContainer.innerHTML = '';
       });
 
-      requests.forEach(req => {
+      // Filter data sesuai Search Bar
+      const filtered = requests.filter(req => {
+        if (!currentSearchTerm) return true;
+        const matchItem = req.item.toLowerCase().includes(currentSearchTerm);
+        const matchBrand = req.brand.toLowerCase().includes(currentSearchTerm);
+        const matchType = req.type.toLowerCase().includes(currentSearchTerm);
+        const matchId = req.id.toLowerCase().includes(currentSearchTerm);
+        const matchCreator = (req.creatorName || req.createdBy).toLowerCase().includes(currentSearchTerm);
+        return matchItem || matchBrand || matchType || matchId || matchCreator;
+      });
+
+      filtered.forEach(req => {
         const currentStatus = STATUS_MAP[req.status] ? req.status : 'submitted';
         counts[currentStatus] = (counts[currentStatus] || 0) + 1;
         
@@ -645,13 +778,19 @@
         card.id = `card-${req.id}`;
         card.draggable = true;
         card.ondragstart = (e) => handleDragStart(e, req.id);
-        card.className = 'bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-md transition-all duration-200 cursor-grab active:cursor-grabbing hover:border-emerald-500/40 group';
+        card.onclick = (e) => {
+          // Cegah trigger jika sedang drag
+          openTicketDetailModal(req.id);
+        };
+        card.className = 'bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer active:cursor-grabbing hover:border-emerald-500/40 group';
 
         const photoPreview = req.photo
           ? `<div class="overflow-hidden rounded-xl mb-3 border border-slate-100">
                <img src="${req.photo}" class="w-full h-32 object-cover group-hover:scale-105 transition duration-300" alt="Preview"/>
              </div>`
           : '';
+
+        const commentsCount = req.comments ? req.comments.length : 0;
 
         card.innerHTML = `
           ${photoPreview}
@@ -667,14 +806,20 @@
           </p>
           <p class="text-[11px] text-slate-400 mt-2 line-clamp-2 leading-relaxed">${req.desc || 'Tidak ada deskripsi rinci.'}</p>
           
-          <div class="mt-3.5 pt-3 border-t border-slate-100 flex items-center justify-between">
+          <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between">
             <div>
-              <span class="text-[10px] text-slate-400 uppercase font-semibold block leading-none">Est. Budget</span>
-              <span class="text-xs font-bold text-slate-900 mt-0.5 inline-block">${formatIDR(req.budget)}</span>
+              <span class="text-[10px] text-slate-400 uppercase font-semibold block leading-none">Harga Deal / Est</span>
+              <span class="text-xs font-bold text-emerald-700 mt-0.5 inline-block">${formatIDR(req.estimatedPrice || req.budget)}</span>
             </div>
-            <div class="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-slate-50 border border-slate-200/60 text-[10px] text-slate-600 font-medium">
-              <i data-lucide="user" class="w-3 h-3 text-slate-400"></i>
-              <span>${req.createdBy}</span>
+            <div class="flex items-center gap-2">
+              <span class="inline-flex items-center gap-1 text-[11px] text-slate-500 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-200/60">
+                <i data-lucide="message-square" class="w-3 h-3 text-slate-400"></i>
+                ${commentsCount}
+              </span>
+              <div class="flex items-center gap-1 text-[11px] text-slate-500 font-medium">
+                <i data-lucide="user" class="w-3 h-3 text-slate-400"></i>
+                <span>${req.createdBy}</span>
+              </div>
             </div>
           </div>
         `;
@@ -689,6 +834,208 @@
       lucide.createIcons();
     }
 
+    // ================= MODAL DETAIL TIKET & KOMUNIKASI =================
+    function openTicketDetailModal(id) {
+      const ticket = requests.find(r => r.id === id);
+      if (!ticket) return;
+
+      activeTicketId = id;
+      const modal = document.getElementById('modal-ticket-detail');
+
+      // Set Info
+      document.getElementById('detail-ticket-id').textContent = ticket.id;
+      const statusBadge = document.getElementById('detail-ticket-status');
+      const st = STATUS_MAP[ticket.status] || STATUS_MAP.submitted;
+      statusBadge.textContent = st.label;
+      statusBadge.className = `text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${st.badge}`;
+
+      document.getElementById('detail-ticket-item').textContent = ticket.item;
+      document.getElementById('detail-ticket-brand-type').textContent = `${ticket.brand} • ${ticket.type}`;
+      document.getElementById('detail-ticket-desc').textContent = ticket.desc || 'Tidak ada deskripsi tambahan.';
+      document.getElementById('detail-ticket-creator').textContent = ticket.creatorName || ticket.createdBy;
+      document.getElementById('detail-ticket-date').textContent = ticket.date;
+      document.getElementById('detail-ticket-budget').textContent = formatIDR(ticket.budget);
+
+      // Foto
+      const photoContainer = document.getElementById('detail-ticket-photo-container');
+      if (ticket.photo) {
+        photoContainer.innerHTML = `<img src="${ticket.photo}" class="w-full h-full object-cover rounded-xl" alt="Foto Barang"/>`;
+      } else {
+        photoContainer.innerHTML = `<div class="text-center text-slate-400 text-xs"><i data-lucide="image" class="w-6 h-6 mx-auto mb-1 opacity-50"></i>Tanpa Foto</div>`;
+      }
+
+      // Input Harga Realisasi (hanya procurement yang bisa edit, user read-only)
+      const priceInput = document.getElementById('input-ticket-realized-price');
+      const priceBtn = document.getElementById('btn-save-price');
+      priceInput.value = ticket.estimatedPrice || '';
+
+      if (currentUser.role === 'procurement') {
+        priceInput.disabled = false;
+        priceBtn.classList.remove('hidden');
+      } else {
+        priceInput.disabled = true;
+        priceBtn.classList.add('hidden');
+      }
+
+      // Render Messages
+      renderChatMessages();
+
+      modal.classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeTicketDetailModal() {
+      const modal = document.getElementById('modal-ticket-detail');
+      modal.classList.add('hidden');
+      activeTicketId = null;
+      clearSelectedFile();
+      document.getElementById('chat-form').reset();
+    }
+
+    // SIMPAN ESTIMATED / REALIZED PRICE
+    function saveTicketPrice() {
+      if (!activeTicketId) return;
+      const ticket = requests.find(r => r.id === activeTicketId);
+      if (!ticket) return;
+
+      const priceVal = document.getElementById('input-ticket-realized-price').value;
+      ticket.estimatedPrice = priceVal ? Number(priceVal) : null;
+      saveData();
+      renderApp();
+      alert('Estimasi harga pengadaan berhasil diperbarui!');
+    }
+
+    // RENDER CHAT / KOMUNIKASI
+    function renderChatMessages() {
+      const ticket = requests.find(r => r.id === activeTicketId);
+      const chatBox = document.getElementById('chat-messages-box');
+      chatBox.innerHTML = '';
+
+      if (!ticket.comments || ticket.comments.length === 0) {
+        chatBox.innerHTML = `
+          <div class="h-full flex flex-col items-center justify-center text-slate-400 text-center">
+            <i data-lucide="message-square-dashed" class="w-8 h-8 mb-1.5 opacity-60"></i>
+            <p class="font-medium">Belum ada diskusi untuk tiket ini.</p>
+            <p class="text-[10px] text-slate-400 mt-0.5">Mulai obrolan untuk verifikasi spesifikasi atau update vendor.</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      ticket.comments.forEach(msg => {
+        const isMe = msg.sender === currentUser.username;
+        const msgWrapper = document.createElement('div');
+        msgWrapper.className = `flex flex-col ${isMe ? 'items-end' : 'items-start'}`;
+
+        const roleTag = msg.role === 'procurement' 
+          ? '<span class="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded">Procurement</span>'
+          : '<span class="text-[10px] font-bold text-blue-700 bg-blue-100 px-1.5 py-0.2 rounded">Requester</span>';
+
+        let attachmentHtml = '';
+        if (msg.attachment) {
+          if (msg.attachment.isImage) {
+            attachmentHtml = `
+              <div class="mt-2">
+                <a href="${msg.attachment.data}" target="_blank">
+                  <img src="${msg.attachment.data}" class="max-w-[200px] max-h-36 rounded-xl border border-slate-200 shadow-sm object-cover" alt="Lampiran"/>
+                </a>
+              </div>
+            `;
+          } else {
+            attachmentHtml = `
+              <div class="mt-2">
+                <a href="${msg.attachment.data}" download="${msg.attachment.name}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-xl text-[11px] font-medium text-slate-700 border border-slate-200 transition">
+                  <i data-lucide="file-text" class="w-3.5 h-3.5 text-emerald-700"></i>
+                  <span class="truncate max-w-[150px]">${msg.attachment.name}</span>
+                  <i data-lucide="download" class="w-3 h-3 text-slate-400"></i>
+                </a>
+              </div>
+            `;
+          }
+        }
+
+        msgWrapper.innerHTML = `
+          <div class="flex items-center gap-1.5 mb-1 text-[11px] text-slate-500">
+            <span class="font-bold text-slate-700">${msg.senderName}</span>
+            ${roleTag}
+            <span>•</span>
+            <span class="text-[10px] text-slate-400">${msg.time}</span>
+          </div>
+          <div class="p-3 rounded-2xl max-w-md ${isMe ? 'bg-emerald-700 text-white rounded-tr-none' : 'bg-white text-slate-800 border border-slate-200/80 rounded-tl-none shadow-sm'}">
+            <p class="leading-relaxed text-xs">${msg.text}</p>
+            ${attachmentHtml}
+          </div>
+        `;
+        chatBox.appendChild(msgWrapper);
+      });
+
+      chatBox.scrollTop = chatBox.scrollHeight;
+      lucide.createIcons();
+    }
+
+    // HANDLING LAMPIRAN FILE PADA CHAT
+    function handleFileSelected(input) {
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          pendingFileAttachment = {
+            name: file.name,
+            size: file.size,
+            isImage: file.type.startsWith('image/'),
+            data: e.target.result
+          };
+          document.getElementById('file-selected-name').textContent = `File siap: ${file.name}`;
+          document.getElementById('btn-cancel-file').classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function clearSelectedFile() {
+      pendingFileAttachment = null;
+      const fileInput = document.getElementById('chat-file-input');
+      if (fileInput) fileInput.value = '';
+      document.getElementById('file-selected-name').textContent = 'Lampirkan File / Dokumen (PDF, Gambar, Excel)';
+      document.getElementById('btn-cancel-file').classList.add('hidden');
+    }
+
+    // KIRIM PESAN CHAT
+    function handleSendComment(e) {
+      e.preventDefault();
+      if (!activeTicketId) return;
+
+      const ticket = requests.find(r => r.id === activeTicketId);
+      if (!ticket) return;
+
+      const input = document.getElementById('chat-input-text');
+      const text = input.value.trim();
+      if (!text && !pendingFileAttachment) return;
+
+      const now = new Date();
+      const timeStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' }) + ' ' + 
+                      now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+      if (!ticket.comments) ticket.comments = [];
+
+      ticket.comments.push({
+        sender: currentUser.username,
+        senderName: currentUser.name,
+        role: currentUser.role,
+        text: text,
+        time: timeStr,
+        attachment: pendingFileAttachment
+      });
+
+      saveData();
+      input.value = '';
+      clearSelectedFile();
+      renderChatMessages();
+      renderApp();
+    }
+
+    // ================= MODAL PENGAJUAN BARU =================
     function toggleModal(show) {
       const modal = document.getElementById('modal-request');
       if (show) {
@@ -721,10 +1068,12 @@
           brand,
           type,
           budget: Number(budget),
+          estimatedPrice: null,
           desc,
           photo: photoBase64,
           status: 'submitted',
-          date: today
+          date: today,
+          comments: []
         };
         requests.unshift(newReq);
         saveData();
@@ -741,6 +1090,7 @@
       }
     }
 
+    // ================= DRAG AND DROP KANBAN =================
     function handleDragStart(e, id) {
       e.dataTransfer.setData('text/plain', id);
       e.dataTransfer.effectAllowed = 'move';
