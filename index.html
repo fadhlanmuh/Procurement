@@ -226,7 +226,7 @@
           <p class="text-xs text-slate-500 mt-1">Geser kartu antarkolom untuk mengubah status. Klik kartu untuk membuka detail, input harga & chat.</p>
         </div>
 
-        <!-- KOLOM PENCARIAN BARANG (ITEM SEARCH PROCUREMENT) -->
+        <!-- Search Bar Procurement -->
         <div class="flex items-center gap-3 w-full md:w-auto">
           <div class="relative flex-1 md:w-80">
             <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
@@ -325,7 +325,6 @@
   <!-- ================= MODAL DETAIL TIKET & KOMUNIKASI ================= -->
   <div id="modal-ticket-detail" class="hidden fixed inset-0 z-50 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl shadow-2xl w-full max-w-3xl overflow-hidden border border-slate-100 flex flex-col max-h-[92vh]">
-      <!-- Header -->
       <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
         <div class="flex items-center gap-2.5 flex-wrap">
           <span id="detail-ticket-pr" class="text-xs font-mono font-bold text-indigo-900 bg-indigo-100/90 px-2.5 py-0.5 rounded-md border border-indigo-200"></span>
@@ -337,9 +336,7 @@
         </button>
       </div>
 
-      <!-- Body -->
       <div class="flex-1 overflow-y-auto p-6 space-y-6">
-        
         <!-- Info Barang -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pb-5 border-b border-slate-100">
           <div class="sm:col-span-2 space-y-1">
@@ -381,7 +378,7 @@
           </div>
         </div>
 
-        <!-- KOMUNIKASI & LAMPIRAN FILE (CHAT BOX) -->
+        <!-- CHAT BOX -->
         <div>
           <div class="flex items-center justify-between mb-3">
             <h4 class="font-bold text-xs uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
@@ -418,7 +415,6 @@
             </div>
           </form>
         </div>
-
       </div>
     </div>
   </div>
@@ -438,7 +434,6 @@
       </div>
 
       <form id="request-form" onsubmit="handleCreateRequest(event)" class="p-6 overflow-y-auto space-y-4 text-xs">
-        <!-- INPUT NOMOR PR -->
         <div>
           <label class="block font-bold text-slate-700 mb-1">Nomor PR (Purchase Requisition) <span class="text-rose-500">*</span></label>
           <div class="relative">
@@ -517,7 +512,6 @@
       const stored = localStorage.getItem('procureflow_requests');
       if (stored) {
         requests = JSON.parse(stored);
-        // Pastikan atribut prNumber, comments, dan estimatedPrice selalu ada
         requests.forEach((r, idx) => {
           if (!r.prNumber) r.prNumber = `PR/2026/09/00${idx + 10}`;
           if (!r.comments) r.comments = [];
@@ -695,7 +689,7 @@
       lucide.createIcons();
     }
 
-    // ================= SEARCH HANDLERS =================
+    // SEARCH HANDLERS
     function handleSearch(query) {
       procurementSearchTerm = query.toLowerCase().trim();
       renderProcurementBoard();
@@ -706,17 +700,15 @@
       renderUserDashboard();
     }
 
-    // ================= USER DASHBOARD (WITH ITEM SEARCH & PR NUMBER) =================
+    // USER DASHBOARD
     function renderUserDashboard() {
       const tableBody = document.getElementById('user-requests-table');
       const emptyState = document.getElementById('user-empty-state');
       const countBadge = document.getElementById('user-req-count');
       tableBody.innerHTML = '';
 
-      // Filter berdasarkan akun user
       let myRequests = requests.filter(r => r.createdBy === currentUser.username);
 
-      // Filter pencarian user
       if (userSearchTerm) {
         myRequests = myRequests.filter(r => {
           const matchPr = (r.prNumber || '').toLowerCase().includes(userSearchTerm);
@@ -792,7 +784,7 @@
       lucide.createIcons();
     }
 
-    // ================= PROCUREMENT KANBAN BOARD =================
+    // PROCUREMENT BOARD
     function renderProcurementBoard() {
       const columns = ['submitted', 'sourcing', 'review', 'hold', 'po', 'completed'];
       const counts = { submitted: 0, sourcing: 0, review: 0, hold: 0, po: 0, completed: 0 };
@@ -879,7 +871,7 @@
       lucide.createIcons();
     }
 
-    // ================= MODAL DETAIL TIKET & KOMUNIKASI =================
+    // MODAL DETAIL TIKET
     function openTicketDetailModal(id) {
       const ticket = requests.find(r => r.id === id);
       if (!ticket) return;
@@ -887,7 +879,6 @@
       activeTicketId = id;
       const modal = document.getElementById('modal-ticket-detail');
 
-      // Set Info Header
       document.getElementById('detail-ticket-pr').textContent = ticket.prNumber || 'No PR';
       document.getElementById('detail-ticket-id').textContent = ticket.id;
       const statusBadge = document.getElementById('detail-ticket-status');
@@ -902,7 +893,6 @@
       document.getElementById('detail-ticket-date').textContent = ticket.date;
       document.getElementById('detail-ticket-budget').textContent = formatIDR(ticket.budget);
 
-      // Foto
       const photoContainer = document.getElementById('detail-ticket-photo-container');
       if (ticket.photo) {
         photoContainer.innerHTML = `<img src="${ticket.photo}" class="w-full h-full object-cover rounded-xl" alt="Foto Barang"/>`;
@@ -910,7 +900,6 @@
         photoContainer.innerHTML = `<div class="text-center text-slate-400 text-xs"><i data-lucide="image" class="w-6 h-6 mx-auto mb-1 opacity-50"></i>Tanpa Foto</div>`;
       }
 
-      // Input Harga Realisasi (hanya procurement yang bisa edit)
       const priceInput = document.getElementById('input-ticket-realized-price');
       const priceBtn = document.getElementById('btn-save-price');
       priceInput.value = ticket.estimatedPrice || '';
@@ -923,9 +912,7 @@
         priceBtn.classList.add('hidden');
       }
 
-      // Render Messages
       renderChatMessages();
-
       modal.classList.remove('hidden');
       lucide.createIcons();
     }
@@ -1077,7 +1064,7 @@
       renderApp();
     }
 
-    // ================= MODAL PENGAJUAN BARU =================
+    // MODAL PENGAJUAN BARU
     function toggleModal(show) {
       const modal = document.getElementById('modal-request');
       if (show) {
@@ -1134,7 +1121,7 @@
       }
     }
 
-    // ================= DRAG AND DROP KANBAN =================
+    // DRAG AND DROP
     function handleDragStart(e, id) {
       e.dataTransfer.setData('text/plain', id);
       e.dataTransfer.effectAllowed = 'move';
